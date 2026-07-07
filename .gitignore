@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dev-dist/
+*.local
+.claude/
+Thumbs.db
+Desktop.ini
+
+# セッション引き継ぎ用メモ（ローカル専用・公開しない）
+/HANDOFF.md
+/PLAN.md
+/REFACTOR_STATUS.md
