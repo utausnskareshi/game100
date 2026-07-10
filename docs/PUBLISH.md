@@ -53,15 +53,31 @@ git push -u origin github-main:main
    （新ゲームの `addedIn` はこの新バージョンにする → 一覧に NEW バッジが付く）
 4. 更新履歴の文面は、公開前に内容を決める（アプリの「せってい → 更新履歴」に出る文章）
 5. 動作確認: `npm run build` がエラーなく通ること
-6. コミットしてプッシュ（**公開用の `github-main` ブランチ上で**）:
+6. **公開用のきれいな1コミットにまとめて送る**（手元の細かい開発履歴は GitHub に載せず、リリースごとに1コミットだけ追加する）。PowerShell でプロジェクトフォルダに移動して:
 
 ```powershell
+git fetch origin
+
+# 公開済みの最新（main）から作業ブランチを作り、いまの全ファイルを1コミットにまとめる
+git checkout -B publish origin/main
+git checkout github-main -- .
 git add -A
-git commit -m "v0.6.0: ○○を追加"
-git push
+git commit -m "GAME100 v0.20.0"
+
+# GitHub の main へ「追加の1コミット」として送る（作者はあなただけ・開発履歴は載らない）
+git push origin publish:main
+
+# 開発は github-main で続ける（一時ブランチは消してよい）
+git checkout github-main
+git branch -D publish
 ```
 
-→ あとは自動でビルド・公開されます。
+> 💡 これで GitHub の履歴は「v0.5.0 → v0.20.0」のように**リリースごとに1コミットずつ**きれいに増えます
+> （作者は `utausnskareshi` のみ・メールは noreply・手元の開発履歴は公開されません）。
+> `git checkout github-main -- .` は追加・変更を反映します。前バージョンからファイルを**削除**した場合だけ、
+> `publish` ブランチ側でも `git rm <消したファイル>` して消えていることを確認してください（今回は削除なし）。
+
+→ あとは GitHub Actions が自動でビルド・公開します。
 
 ### 利用者にはどう届く？
 

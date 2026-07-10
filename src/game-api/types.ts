@@ -89,7 +89,14 @@ export interface GameMeta {
   help: HelpDef;
   achievements: AchievementDef[];
   /** アイコン（絵文字1文字。背景グラデはIDから自動生成される） */
-  icon: { emoji: string };
+  icon: {
+    emoji: string;
+    /**
+     * あれば絵文字の代わりに描くインラインSVG（背景も含む・端末非依存の自作アイコン用）。
+     * 絵文字は iOS/Android で見た目が変わるため、意匠が重要なアイコンで使う。信頼できる静的文字列のみ。
+     */
+    svg?: string;
+  };
   /** 追加されたアプリバージョン（NEWバッジに使われる） */
   addedIn: string;
   /** retired にすると一覧から消える（番号は欠番のまま維持） */
@@ -171,6 +178,13 @@ export interface MotionHelper {
   /** 現在の持ち方をニュートラル(0,0)として記録する */
   calibrate(): void;
   onShake(cb: () => void): Unsubscribe;
+  /**
+   * シェイクの強さ 0〜1（連続値・ライブ参照）。振っている間は大きく、止めると減衰して0に戻る。
+   * onShake（約600msで1回の「明確なひと振り」を離散検出）とは別物で、「振り続ける強さ」を
+   * 毎フレーム読める（例: 振るほど速く走るゲーム）。値をコピーして持たず都度参照すること。
+   * 省略される場合がある（未対応環境）。センサー未許可なら motion 自体が null。
+   */
+  readonly shakeLevel?: number;
 }
 
 export interface GameResult {
@@ -201,6 +215,11 @@ export interface GameContext {
    */
   onFrame(cb: (dt: number) => void): Unsubscribe;
   sfx(name: SfxName): void;
+  /**
+   * 指定周波数(Hz)の音を durationMs 鳴らす（ピアノ等の任意の音程用）。
+   * ミュート設定を尊重する。省略される場合がある（未対応環境）。音楽系ゲーム向け。
+   */
+  tone?(freqHz: number, durationMs?: number): void;
   /** バイブレーション。非対応端末（iPhone等）では自動で何もしない */
   haptic(kind: HapticKind): void;
   /** シード付き乱数 0〜1。「今日のゲーム」では日替わり共通シードになる。Math.random は使わない */

@@ -109,6 +109,16 @@ function tone(freq: number, opts: ToneOpts = {}): void {
   }
 }
 
+/**
+ * ゲーム用: 指定周波数(Hz)の音を鳴らす（ピアノ等の任意の音程演出）。
+ * 内部の tone() を使うのでミュート設定(settings.sound)を自動で尊重する。
+ * 音を出すには事前に unlockAudio()（シェルが「あそぶ」で実行）が必要。
+ */
+export function playTone(freq: number, durationMs = 400): void {
+  resumeIfNeeded();
+  tone(freq, { dur: Math.max(0.03, durationMs / 1000), type: 'triangle', vol: 0.26 });
+}
+
 export function playSfx(name: SfxName): void {
   resumeIfNeeded();
   switch (name) {

@@ -18,7 +18,7 @@ import type {
   SwipeDir,
   Unsubscribe,
 } from '../game-api/types';
-import { playSfx, unlockAudio } from './audio';
+import { playSfx, playTone, unlockAudio } from './audio';
 import { haptic } from './haptics';
 import { pushGuard, type GuardHandle } from './backstack';
 import { el, clear } from './dom';
@@ -157,10 +157,17 @@ export function mountGameHost(meta: GameMeta, onExit: () => void): GameHostHandl
     };
 
     const onDown = (e: PointerEvent): void => {
-      try {
-        gameRoot.setPointerCapture(e.pointerId);
-      } catch {
-        /* ignore */
+      // ポインタキャプチャは「ドラッグを使うゲーム（onMove 購読あり）」のときだけ行う。
+      // gameRoot にキャプチャすると、gameRoot 内に置かれた DOM ボタン（設定セグメント・
+      // ゲーム盤のマス等）への click がキャプチャ側へ奪われ、実タップで反応しなくなる。
+      // DOM ゲーム（reversi/speed/hit-and-blow/treasure-dig/number-place など）は onMove を
+      // 使わないのでキャプチャせず、ネイティブの click をそのまま活かす。
+      if (moves.size > 0) {
+        try {
+          gameRoot.setPointerCapture(e.pointerId);
+        } catch {
+          /* ignore */
+        }
       }
       const p = toInfo(e);
       starts.set(e.pointerId, { x: p.x, y: p.y, t: performance.now() });
@@ -372,10 +379,18 @@ export function mountGameHost(meta: GameMeta, onExit: () => void): GameHostHandl
     const startBtn = el('button', { class: 'btn btn-primary btn-large', text: 'あそぶ ▶' });
     startBtn.addEventListener('click', () => void startFlow());
 
+    const iconEl = el('div', { class: 'pregame-icon', 'aria-hidden': 'true' });
+    if (meta.icon.svg) {
+      iconEl.classList.add('pregame-icon-svg');
+      iconEl.innerHTML = meta.icon.svg;
+    } else {
+      iconEl.textContent = meta.icon.emoji;
+    }
+
     const content = el(
       'div',
       { class: 'pregame' },
-      el('div', { class: 'pregame-icon', text: meta.icon.emoji }),
+      iconEl,
       el('div', { class: 'pregame-no', text: `No.${String(meta.no).padStart(3, '0')}` }),
       el('h2', { class: 'pregame-title', text: meta.title }),
       el('p', { class: 'pregame-desc', text: meta.description }),
@@ -518,6 +533,9 @@ export function mountGameHost(meta: GameMeta, onExit: () => void): GameHostHandl
       // onShake はプレイ中のみゲームへ届ける（ポーズ中・結果画面での誤発火防止）
       motionHelper = {
         tilt: m.helper.tilt,
+        get shakeLevel() {
+          return m.helper.shakeLevel ?? 0;
+        },
         calibrate: () => m.helper.calibrate(),
         onShake: (cb) =>
           m.helper.onShake(() => {
@@ -540,6 +558,7 @@ export function mountGameHost(meta: GameMeta, onExit: () => void): GameHostHandl
         return () => frameCbs.delete(cb);
       },
       sfx: playSfx,
+      tone: (freq, ms) => playTone(freq, ms),
       haptic,
       random: rng,
       now: () => playedMs,

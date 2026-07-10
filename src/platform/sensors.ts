@@ -50,6 +50,7 @@ export function createMotionHelper(): { helper: MotionHelper; destroy: () => voi
   const offset = { x: 0, y: 0 };
   const shakeCbs = new Set<() => void>();
   let lastShakeAt = 0;
+  let shakeLevel = 0; // 連続シェイク強度 0〜1（振ると上がり、止めると減衰）
 
   // iOS と Android は accelerationIncludingGravity の符号が逆という前提で正規化する
   // （Android=spec準拠の反作用ベクトル / iOS はその符号反転）。この前提が誤っていると
@@ -105,12 +106,19 @@ export function createMotionHelper(): { helper: MotionHelper; destroy: () => voi
         shakeCbs.forEach((cb) => cb());
       }
     }
+    // 連続シェイク強度（onShake の離散検出とは別）。小さな揺れは無視し、mag≈21 で最大。
+    // devicemotion は継続的に届くので、イベントごとに減衰させれば止めた瞬間に速やかに 0 へ戻る。
+    const inst = clamp((mag - 3) / 18, 0, 1);
+    shakeLevel = Math.max(shakeLevel * 0.82, inst);
   };
 
   window.addEventListener('devicemotion', onMotion);
 
   const helper: MotionHelper = {
     tilt,
+    get shakeLevel() {
+      return shakeLevel;
+    },
     calibrate() {
       offset.x = pre.x;
       offset.y = pre.y;

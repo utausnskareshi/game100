@@ -213,11 +213,18 @@ export function infoSheet(title: string, body: HTMLElement): void {
 // ---------- ゲームアイコン（絵文字 + ID由来のグラデ背景） ----------
 
 export function gameIconTile(meta: GameMeta, size: 'sm' | 'md' | 'lg' = 'md'): HTMLElement {
-  const h = hashString(meta.id);
-  const hue = h % 360;
-  const hue2 = (hue + 45) % 360;
-  const tile = el('div', { class: `game-icon game-icon-${size}`, text: meta.icon.emoji, 'aria-hidden': 'true' });
-  tile.style.background = `linear-gradient(135deg, hsl(${hue} 55% 42%), hsl(${hue2} 65% 55%))`;
+  const tile = el('div', { class: `game-icon game-icon-${size}`, 'aria-hidden': 'true' });
+  if (meta.icon.svg) {
+    // 端末非依存の自作SVGアイコン（背景も svg 内で描く）。ID由来のグラデ背景は使わない
+    tile.classList.add('game-icon-svg');
+    tile.innerHTML = meta.icon.svg;
+  } else {
+    tile.textContent = meta.icon.emoji;
+    const h = hashString(meta.id);
+    const hue = h % 360;
+    const hue2 = (hue + 45) % 360;
+    tile.style.background = `linear-gradient(135deg, hsl(${hue} 55% 42%), hsl(${hue2} 65% 55%))`;
+  }
   return tile;
 }
 
