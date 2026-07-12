@@ -84,6 +84,50 @@ function achRow(opts: { name: string; desc: string; unlocked: boolean; secret?: 
   );
 }
 
+// 実績グループの開閉状態（セッション中だけ記憶。保存データには入れない＝再起動で全部とじるに戻る）
+const openAchGroups = new Set<string>();
+
+/** グループ見出しの進捗「n/m」。全解除は金色＋👑でコンプが一目でわかる */
+function achProgress(unlocked: number, total: number): HTMLElement {
+  const comp = total > 0 && unlocked >= total;
+  return el('span', {
+    class: 'ach-prog' + (comp ? ' ach-comp' : ''),
+    text: comp ? `👑 ${unlocked}/${total}` : `${unlocked}/${total}`,
+  });
+}
+
+/**
+ * 折りたたみ実績グループ（ネイティブ details/summary）。
+ * 中身の実績行は「はじめて開いたとき」に生成する＝100ゲーム時代でも初期描画は1グループ1行。
+ */
+function achGroup(key: string, summaryParts: HTMLElement[], buildRows: () => HTMLElement[]): HTMLElement {
+  const details = el('details', { class: 'ach-group' }) as HTMLDetailsElement;
+  const body = el('div', { class: 'ach-body' });
+  let built = false;
+  const populate = (): void => {
+    if (built) return;
+    built = true;
+    for (const row of buildRows()) body.appendChild(row);
+  };
+  details.append(
+    el('summary', { class: 'ach-sum' }, ...summaryParts, el('span', { class: 'ach-chev', text: '▸', 'aria-hidden': 'true' })),
+    body,
+  );
+  if (openAchGroups.has(key)) {
+    populate();
+    details.open = true;
+  }
+  details.addEventListener('toggle', () => {
+    if (details.open) {
+      populate();
+      openAchGroups.add(key);
+    } else {
+      openAchGroups.delete(key);
+    }
+  });
+  return details;
+}
+
 export function renderRecords(container: HTMLElement): void {
   const list = activeGames();
   const doc = getDoc();
@@ -103,23 +147,64 @@ export function renderRecords(container: HTMLElement): void {
     0,
   );
   const globalUnlocked = GLOBAL_ACHIEVEMENTS.filter((a) => isUnlocked(`global/${a.id}`)).length;
+
+  // 見出し行＝タイトル＋「すべてひらく／とじる」（ゲームが増えても1タップで全体を見渡せる）
+  const toggleAllBtn = el('button', { class: 'ach-toggle-all', type: 'button' }) as HTMLButtonElement;
   container.appendChild(
-    sectionTitle(
-      `🏆 ${t.records.achievements}（${globalUnlocked + gameAchUnlocked} / ${GLOBAL_ACHIEVEMENTS.length + gameAchTotal}）`,
+    el(
+      'div',
+      { class: 'section-row' },
+      sectionTitle(
+        `🏆 ${t.records.achievements}（${globalUnlocked + gameAchUnlocked} / ${GLOBAL_ACHIEVEMENTS.length + gameAchTotal}）`,
+      ),
+      toggleAllBtn,
     ),
   );
 
+  // ゲームごとの折りたたみリスト（既定はすべてとじる。開いた場所はセッション中だけ記憶）
   const achBox = el('div', { class: 'card ach-list' });
-  achBox.appendChild(el('div', { class: 'ach-group-title', text: `🌏 ${t.records.globalSection}` }));
-  for (const a of GLOBAL_ACHIEVEMENTS) {
-    achBox.appendChild(achRow({ name: a.name, desc: a.desc, secret: a.secret, unlocked: isUnlocked(`global/${a.id}`) }));
-  }
+  achBox.appendChild(
+    achGroup(
+      'global',
+      [
+        el('span', { class: 'ach-sum-emoji', text: '🌏' }),
+        el('span', { class: 'ach-sum-title', text: t.records.globalSection }),
+        achProgress(globalUnlocked, GLOBAL_ACHIEVEMENTS.length),
+      ],
+      () =>
+        GLOBAL_ACHIEVEMENTS.map((a) =>
+          achRow({ name: a.name, desc: a.desc, secret: a.secret, unlocked: isUnlocked(`global/${a.id}`) }),
+        ),
+    ),
+  );
   for (const g of list) {
     if (g.achievements.length === 0) continue;
-    achBox.appendChild(el('div', { class: 'ach-group-title' }, gameIconTile(g, 'sm'), el('span', { text: g.title })));
-    for (const a of g.achievements) {
-      achBox.appendChild(achRow({ name: a.name, desc: a.desc, secret: a.secret, unlocked: isUnlocked(`${g.id}/${a.id}`) }));
-    }
+    const unlocked = g.achievements.filter((a) => isUnlocked(`${g.id}/${a.id}`)).length;
+    achBox.appendChild(
+      achGroup(
+        g.id,
+        [gameIconTile(g, 'sm'), el('span', { class: 'ach-sum-title', text: g.title }), achProgress(unlocked, g.achievements.length)],
+        () =>
+          g.achievements.map((a) =>
+            achRow({ name: a.name, desc: a.desc, secret: a.secret, unlocked: isUnlocked(`${g.id}/${a.id}`) }),
+          ),
+      ),
+    );
   }
   container.appendChild(achBox);
+
+  // すべてひらく／とじる（1つでも閉じていれば「ひらく」動作）
+  const allGroups = (): HTMLDetailsElement[] => Array.from(achBox.querySelectorAll('details.ach-group'));
+  const refreshToggleAll = (): void => {
+    const anyClosed = allGroups().some((d) => !d.open);
+    toggleAllBtn.textContent = anyClosed ? `▾ ${t.records.openAll}` : `▴ ${t.records.closeAll}`;
+  };
+  toggleAllBtn.addEventListener('click', () => {
+    const anyClosed = allGroups().some((d) => !d.open);
+    for (const d of allGroups()) d.open = anyClosed;
+    refreshToggleAll();
+  });
+  // 個別の開閉にもラベルを追従させる（toggle はバブリングしないため capture で拾う）
+  achBox.addEventListener('toggle', () => refreshToggleAll(), true);
+  refreshToggleAll();
 }

@@ -844,17 +844,106 @@ h1, h2, h3 {
 }
 
 .ach-list {
-  padding: 8px 16px 12px;
+  padding: 2px 10px;
 }
 
-.ach-group-title {
+/* 見出し行（セクションタイトル＋すべてひらく/とじる） */
+.section-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
+  margin: 12px 0 8px;
+}
+
+.section-row .section-h {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+.ach-toggle-all {
+  appearance: none;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 0 2px;
+  min-height: 44px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 折りたたみグループ（details/summary） */
+.ach-group {
+  border-bottom: 1px solid var(--line);
+}
+
+.ach-group:last-child {
+  border-bottom: none;
+}
+
+.ach-sum {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 4px 6px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ach-sum::-webkit-details-marker {
+  display: none;
+}
+
+.ach-sum-emoji {
+  width: 34px;
+  font-size: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ach-sum-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ach-prog {
   font-size: 13px;
   font-weight: 800;
   color: var(--text-dim);
-  margin: 14px 0 2px;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.ach-prog.ach-comp {
+  color: var(--gold);
+}
+
+.ach-chev {
+  color: var(--text-dim);
+  font-size: 13px;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+details[open] > .ach-sum .ach-chev {
+  transform: rotate(90deg);
+}
+
+.ach-body {
+  padding: 0 6px 8px 50px;
 }
 
 .ach-row {

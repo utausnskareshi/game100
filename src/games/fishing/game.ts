@@ -3,13 +3,15 @@
 // =============================================================
 // - 「つる」で糸を投げ、ランダムな待ち時間のあと「！」（アタリ窓）が出る。
 //   窓のあいだに「あわせる」で釣り上げ成功。早すぎ＝すっぽ抜け／窓を逃す＝バラシ。
+// - 待ちのあいだ、ウキが「浅く」沈むフェイント（にせアタリ）が入る。「！」は出ず、
+//   ひっかかってタップすると すっぽ抜け。大物・レアほどアタリ窓が短い（fish.ts）。
 // - 全8キャスト。失敗しても減点なし（チル）。魚は図鑑に集まる（ctx.save 跨ぎ保存）。
 // - 待ち時間・アタリ窓・魚の抽選は fish.ts の純ロジック（rng 注入＝今日のゲームは全員同じ）。
 // - 時間はすべて ctx.now の期限方式（setTimeout 不使用＝ポーズで自動停止）。
 // - import してよいのは game-api（types/helpers）と、このフォルダ内（fish）だけ
 import type { GameContext, IGame } from '../../game-api/types';
 import { elem, makeSeg } from '../../game-api/helpers';
-import { SPOTS, ALL_FISH_IDS, pickFish, biteDelay, biteWindow, type SpotKey, type Fish } from './fish';
+import { SPOTS, ALL_FISH_IDS, pickFish, biteDelay, biteWindowFor, feintPlan, type SpotKey, type Fish } from './fish';
 
 type Mode = 'setup' | 'idle' | 'sink' | 'bite' | 'result' | 'over';
 
@@ -44,6 +46,7 @@ export function createGame(ctx: GameContext): IGame {
   let biteWindowMs = 0; // 今回のアタリ窓の長さ
   let biteUntil = 0; // アタリ窓が閉じる時刻
   let pendingFish: Fish | null = null; // アタリ中に確定している魚
+  let feints: { start: number; end: number; signaled: boolean }[] = []; // 今キャストのフェイント（絶対時刻）
   let resultUntil = 0;
   let endAt = 0;
   let ended = false;
@@ -95,7 +98,7 @@ export function createGame(ctx: GameContext): IGame {
         },
       ),
     );
-    box.append(elem('p', 'fs-note', 'ウキが しずんで「！」が出た しゅんかんに「あわせる」でタップ！早すぎ・おそすぎは にがすよ。ぜんぶで8かい。'));
+    box.append(elem('p', 'fs-note', 'ウキが しずんで「！」が出た しゅんかんに「あわせる」でタップ！ちょっとだけ しずむのは フェイント（がまん！）。早すぎ・おそすぎは にがすよ。ぜんぶで8かい。'));
     box.append(elem('p', 'fs-zukan-line', `📖 ずかん ${zukan.size}/${ALL_FISH_IDS.length}`));
     const start = elem('button', 'fs-btn fs-btn-primary fs-btn-lg', 'はじめる ▶') as HTMLButtonElement;
     start.addEventListener('click', () => startMatch());
@@ -153,7 +156,10 @@ export function createGame(ctx: GameContext): IGame {
 
   function cast(now: number): void {
     setMode('sink');
-    biteAt = now + biteDelay(ctx.random);
+    const delay = biteDelay(ctx.random);
+    biteAt = now + delay;
+    feints = feintPlan(ctx.random, spot, delay).map((f) => ({ start: now + f.start, end: now + f.end, signaled: false }));
+    if (import.meta.env.DEV) wrap.dataset.fe = String(feints.length); // 検証用（開発ビルド限定）
     pendingFish = null;
     if (msgEl) {
       msgEl.className = 'fs-msg';
@@ -167,9 +173,9 @@ export function createGame(ctx: GameContext): IGame {
   function toBite(now: number): void {
     setMode('bite');
     biteStart = now;
-    biteWindowMs = biteWindow(ctx.random);
-    biteUntil = now + biteWindowMs;
     pendingFish = pickFish(ctx.random, spot);
+    biteWindowMs = biteWindowFor(ctx.random, pendingFish); // 大物・レアほど短い
+    biteUntil = now + biteWindowMs;
     if (msgEl) {
       msgEl.className = 'fs-msg fs-msg-bite';
       msgEl.textContent = 'いまだ！';
@@ -202,7 +208,9 @@ export function createGame(ctx: GameContext): IGame {
   }
 
   function tooEarly(now: number): void {
-    showMiss('はやい！ ⏱');
+    // フェイントの最中にあわせた場合は「ひっかかった」と分かる文言にする（学べる失敗に）
+    const feinted = feints.some((f) => now >= f.start && now < f.end);
+    showMiss(feinted ? 'フェイントだった… 💦' : 'はやい！ ⏱');
     ctx.sfx('fail');
     ctx.haptic('error');
     toResult(now);
@@ -269,6 +277,7 @@ export function createGame(ctx: GameContext): IGame {
     if (!floatEl || !bangEl) return;
     floatEl.classList.toggle('fs-float-on', mode === 'sink' || mode === 'bite');
     floatEl.classList.toggle('fs-float-dip', mode === 'bite');
+    floatEl.classList.remove('fs-float-feint'); // sink 中の付け直しは毎フレーム側で行う
     bangEl.classList.toggle('fs-bang-on', mode === 'bite');
   }
 
@@ -292,7 +301,24 @@ export function createGame(ctx: GameContext): IGame {
   const offFrame = ctx.onFrame(() => {
     const now = ctx.now();
     if (mode === 'sink') {
-      if (now >= biteAt) toBite(now);
+      if (now >= biteAt) {
+        toBite(now);
+      } else {
+        // フェイント（にせアタリ）: ウキだけ浅く沈める。「！」もボタン変化も出さない
+        let inFeint = false;
+        for (const f of feints) {
+          if (now >= f.start && now < f.end) {
+            inFeint = true;
+            if (!f.signaled) {
+              f.signaled = true;
+              ctx.sfx('tap');
+              ctx.haptic('light');
+            }
+          }
+        }
+        floatEl?.classList.toggle('fs-float-feint', inFeint);
+        if (import.meta.env.DEV) wrap.dataset.inf = inFeint ? '1' : '0';
+      }
     } else if (mode === 'bite') {
       if (now >= biteUntil) escape(now);
     } else if (mode === 'result') {
@@ -367,6 +393,7 @@ const CSS = `
 @keyframes fs-wave{from{background-position-y:0}to{background-position-y:20px}}
 .fs-float{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);font-size:34px;opacity:0;transition:top .18s ease,opacity .2s}
 .fs-float-on{opacity:1}
+.fs-float-feint{top:45%}
 .fs-float-dip{top:52%}
 .fs-bang{position:absolute;left:50%;top:24%;transform:translateX(-50%);font-size:46px;font-weight:900;color:#fff;
   text-shadow:0 2px 8px rgba(0,0,0,.35);opacity:0;transition:opacity .1s}

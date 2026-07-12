@@ -19,6 +19,7 @@ const ITEM_R = 18; // 落下物の当たり半径
 const MAX_LIVES = 3;
 const LEVEL_MS = 10_000; // このミリ秒ごとにレベル+1（加速）
 const END_DELAY = 1300; // ゲームオーバー演出→結果画面までの余韻(ms)
+const MISS_LIFE_STREAK = 3; // フルーツを何回つづけて取りこぼしたらライフが1つへるか
 
 interface Item {
   x: number;
@@ -35,8 +36,8 @@ interface Pop {
   until: number;
 }
 
-const spawnInterval = (level: number): number => Math.max(430, 950 - level * 80);
-const fallSpeed = (level: number): number => Math.min(150 + level * 26, 430);
+const spawnInterval = (level: number): number => Math.max(360, 820 - level * 85);
+const fallSpeed = (level: number): number => Math.min(210 + level * 30, 540);
 
 export function createGame(ctx: GameContext): IGame {
   const cv = ctx.canvas2d({ design: { w: W, h: H } });
@@ -50,6 +51,7 @@ export function createGame(ctx: GameContext): IGame {
   let score = 0;
   let combo = 0;
   let maxCombo = 0;
+  let missStreak = 0; // フルーツを つづけて取りこぼした回数（キャッチで 0 に戻る）
   let totalCaught = 0;
   let bombsCaught = 0;
   let goldenCaught = 0;
@@ -78,6 +80,7 @@ export function createGame(ctx: GameContext): IGame {
     score = 0;
     combo = 0;
     maxCombo = 0;
+    missStreak = 0;
     totalCaught = 0;
     bombsCaught = 0;
     goldenCaught = 0;
@@ -107,6 +110,7 @@ export function createGame(ctx: GameContext): IGame {
   }
 
   function onCatch(it: Item): void {
+    missStreak = 0; // 何かをキャッチできた＝取りこぼしの連続は途切れる
     if (it.kind === 'bomb') {
       lives--;
       combo = 0;
@@ -142,6 +146,26 @@ export function createGame(ctx: GameContext): IGame {
     if (combo === 15) {
       ctx.sfx('combo');
       ctx.achieve('combo-15');
+    }
+  }
+
+  // フルーツを取りこぼした（＝連続キャッチが途切れた）。コンボは 0 に戻り、
+  // 取りこぼしが MISS_LIFE_STREAK 回つづくとライフが 1 つへる。
+  // ばくだん／ゴールデンの取りこぼしは対象外（ばくだんは よけて当然・ゴールデンは純ボーナス）。
+  function onMissFruit(it: Item): void {
+    combo = 0;
+    missStreak++;
+    addPop(it.x, H - 96, '✕', '#e2607a');
+    if (missStreak >= MISS_LIFE_STREAK) {
+      missStreak = 0;
+      lives--;
+      flashUntil = ctx.now() + 260;
+      ctx.sfx('fail');
+      ctx.haptic('error');
+      if (lives <= 0) gameOver();
+    } else {
+      ctx.sfx('tick');
+      ctx.haptic('light');
     }
   }
 
@@ -185,11 +209,14 @@ export function createGame(ctx: GameContext): IGame {
         if (caught) {
           items.splice(i, 1);
           onCatch(it);
-          if (over) break; // ばくだんでゲームオーバーした瞬間、同フレームの残り取得で加点しない
+          if (over) break; // ばくだん／連続ミスでゲームオーバーした瞬間、同フレームの残り取得で加点しない
         } else if (it.y - ITEM_R > H) {
-          // 取りこぼしはペナルティなし（同時に何個も落ちるので取り切れないのが自然）。
-          // コンボは「ばくだんを取るまで」続く＝取りこぼしでは切れない（bombキャッチ時のみ0）
+          // 画面下へ落ちきった。フルーツの取りこぼしはコンボを切り、連続でつづくとライフがへる
           items.splice(i, 1);
+          if (it.kind === 'fruit') {
+            onMissFruit(it);
+            if (over) break;
+          }
         }
       }
     }
@@ -203,6 +230,19 @@ export function createGame(ctx: GameContext): IGame {
     if (over && !ended && now >= endAt) {
       ended = true;
       ctx.end({ score });
+    }
+
+    if (import.meta.env.DEV) {
+      // 検証用の状態公開（開発ビルド限定・本番には含まれない）
+      const ds = ctx.root.dataset;
+      ds.score = String(score);
+      ds.lives = String(lives);
+      ds.combo = String(combo);
+      ds.miss = String(missStreak);
+      ds.lv = String(level());
+      ds.caught = String(totalCaught);
+      ds.bombs = String(bombsCaught);
+      ds.over = over ? '1' : '0';
     }
 
     draw(now);

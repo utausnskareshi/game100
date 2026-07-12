@@ -318,7 +318,8 @@ const CSS = `
 
 /* 盤 */
 .nm-board{position:relative;width:min(92vw,440px);aspect-ratio:1;background:var(--bg-elev2);border-radius:14px;padding:8px;
-  box-sizing:border-box;display:grid;grid-template-columns:repeat(var(--n),1fr);gap:8px;margin:auto 0}
+  box-sizing:border-box;display:grid;grid-template-columns:repeat(var(--n),1fr);grid-template-rows:repeat(var(--n),1fr);
+  gap:8px;margin:auto 0}
 .nm-cell{border-radius:9px;background:rgba(127,127,160,.16);display:flex;align-items:center;justify-content:center;
   font-weight:900;font-variant-numeric:tabular-nums;line-height:1;color:#fff}
 .nm-pop{animation:nm-pop .16s ease-out}

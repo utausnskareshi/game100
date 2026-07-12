@@ -2,7 +2,8 @@
 // のんびりさかなつり（No.17）のロジック（DOM非依存・乱数注入）
 // =============================================================
 // - つりば（かわ/いけ/うみ）ごとの魚テーブルと重み付き抽選、アタリまでの待ち時間・
-//   アタリ窓の長さを注入 rng から決める（「今日のゲーム」では全員同じ引き）。
+//   アタリ窓の長さ・フェイント（にせアタリ）の計画を注入 rng から決める
+//   （「今日のゲーム」では全員同じ引き）。
 // - 図鑑（ずかん）は全つりば横断で一意な id を集める（ゲーム側が ctx.save で永続化）。
 // - import してよいのは game-api（types/helpers）と同一フォルダのみ（このファイルは依存なし）。
 
@@ -29,11 +30,19 @@ export interface Spot {
   fish: Fish[];
 }
 
-// アタリまでの待ち時間・アタリ窓（ms）。子ども向けに待ちすぎない範囲に。
+// アタリまでの待ち時間・アタリ窓（ms）。待ちは広め（リズム押し対策）・窓は短め。
 export const BITE_DELAY_MIN = 900;
-export const BITE_DELAY_MAX = 2200;
-export const BITE_WINDOW_MIN = 750;
-export const BITE_WINDOW_MAX = 1050;
+export const BITE_DELAY_MAX = 3200;
+export const BITE_WINDOW_MIN = 500;
+export const BITE_WINDOW_MAX = 800;
+// 大物・レアほどアタリ窓が短い（高得点の魚ほど反射勝負になる）
+export const WINDOW_FACTOR_BIG = 0.8;
+export const WINDOW_FACTOR_RARE = 0.7;
+// フェイント（にせアタリ）: ウキが「浅く」沈むが「！」は出ない。ひっかかると すっぽ抜け
+export const FEINT_MS = 550; // 1回のフェイントで沈んでいる時間
+export const FEINT_START_MIN = 350; // キャスト直後はフェイントしない
+export const FEINT_GAP_MS = 350; // フェイント同士の最小間隔
+export const FEINT_END_GAP = 450; // 本アタリのこの時間前までにフェイントを終える
 
 export const SPOTS: Record<SpotKey, Spot> = {
   river: {
@@ -97,7 +106,49 @@ export function biteDelay(rng: () => number): number {
   return rrange(rng, BITE_DELAY_MIN, BITE_DELAY_MAX);
 }
 
-/** アタリ窓の長さ(ms) */
-export function biteWindow(rng: () => number): number {
-  return rrange(rng, BITE_WINDOW_MIN, BITE_WINDOW_MAX);
+/**
+ * アタリ窓の長さ(ms)。大物(big)は×0.8・レア(rare)は×0.7＝高得点の魚ほど一瞬で判断が要る
+ * （big かつ rare の魚は rare 扱い。係数は掛け合わせない）。
+ */
+export function biteWindowFor(rng: () => number, fish: Fish): number {
+  const base = rrange(rng, BITE_WINDOW_MIN, BITE_WINDOW_MAX);
+  const factor = fish.rare ? WINDOW_FACTOR_RARE : fish.big ? WINDOW_FACTOR_BIG : 1;
+  return base * factor;
+}
+
+export interface FeintWindow {
+  /** キャスト時点からのオフセット(ms) */
+  start: number;
+  end: number;
+}
+
+/**
+ * フェイント（にせアタリ）の計画。回数の目安はつりばで差をつける
+ * （かわ 0〜1 / いけ 0〜2 / うみ 1〜2 ＝ 高得点の釣り場ほどフェイントが多い）。
+ * すべて本アタリ（delayMs）の FEINT_END_GAP 手前までに収まるように前から順へ置き、
+ * 待ちが短いキャストでは入りきる数まで減る（0回になることもある）。
+ * rng 注入＝「今日のゲーム」では全員同じフェイント。
+ */
+export function feintPlan(rng: () => number, spotKey: SpotKey, delayMs: number): FeintWindow[] {
+  const r = rng(); // 回数の抽選（必ず1回消費）
+  let n: number;
+  if (spotKey === 'river') n = r < 0.5 ? 0 : 1;
+  else if (spotKey === 'pond') n = r < 0.3 ? 0 : r < 0.75 ? 1 : 2;
+  else n = r < 0.55 ? 1 : 2;
+
+  // 使える区間（先頭 FEINT_START_MIN・末尾 FEINT_END_GAP を除く）に収まる数へ切り詰める
+  const span = delayMs - FEINT_START_MIN - FEINT_END_GAP;
+  while (n > 0 && n * FEINT_MS + (n - 1) * FEINT_GAP_MS > span) n--;
+
+  // 前から順に「残りのフェイントが必ず置ける」範囲でランダム配置（順序・最小間隔・末尾余白を保証）
+  const out: FeintWindow[] = [];
+  let t = FEINT_START_MIN;
+  for (let i = 0; i < n; i++) {
+    const rest = (n - 1 - i) * (FEINT_MS + FEINT_GAP_MS);
+    const hi = FEINT_START_MIN + span - FEINT_MS - rest;
+    const start = t + rng() * Math.max(0, hi - t);
+    out.push({ start, end: start + FEINT_MS });
+    t = start + FEINT_MS + FEINT_GAP_MS;
+  }
+  return out;
 }

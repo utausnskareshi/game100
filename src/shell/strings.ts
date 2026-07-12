@@ -67,6 +67,8 @@ export const t = {
     stampNote: 'あそぶとスタンプ、金メダルで金わくになるよ',
     achievements: 'じっせき',
     globalSection: 'ぜんたい',
+    openAll: 'すべて ひらく',
+    closeAll: 'すべて とじる',
     secretName: '？？？',
     secretDesc: 'かくされた実績',
   },

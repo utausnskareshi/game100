@@ -21,7 +21,7 @@ export interface Spawn {
 
 /**
  * レベルに応じて 1個ぶんの落下物をつくる。
- * ばくだん率はレベルで上がる（12%→最大32%）。ゴールデンは一定5%。
+ * ばくだん率はレベルで上がる（20%→最大42%）。ゴールデンは一定5%。
  * rng は「xFrac → fruit → 種類判定」の順で必ず3回消費する（種類が何でも消費数を一定に保ち、
  * どの端末でも rng 列がずれない＝日替わりの完全一致を守るため）。
  */
@@ -30,7 +30,7 @@ export function rollSpawn(rng: () => number, level: number): Spawn {
   const fruit = Math.floor(rng() * FRUITS.length);
   const r = rng();
   const goldenP = 0.05;
-  const bombP = Math.min(0.12 + level * 0.02, 0.32);
+  const bombP = Math.min(0.2 + level * 0.03, 0.42);
   let kind: ItemKind = 'fruit';
   if (r < goldenP) kind = 'golden';
   else if (r < goldenP + bombP) kind = 'bomb';
