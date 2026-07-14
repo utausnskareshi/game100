@@ -318,8 +318,8 @@ export function createGame(ctx: GameContext): IGame {
           onGoal(goal, now);
           return;
         }
-        if (collideMallet(puck, my, HIT_BOOST, PUCK_MAX)) ctx.sfx('tap');
-        if (collideMallet(puck, cpu, HIT_BOOST, PUCK_MAX)) ctx.sfx('tick');
+        if (collideMallet(puck, my, HIT_BOOST, PUCK_MAX, FIELD)) ctx.sfx('tap');
+        if (collideMallet(puck, cpu, HIT_BOOST, PUCK_MAX, FIELD)) ctx.sfx('tick');
         clampSpeed(puck, PUCK_MAX);
       }
     }

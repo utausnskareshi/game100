@@ -187,7 +187,7 @@ export function createGame(ctx: GameContext): IGame {
     const cell = Math.max(34, Math.floor(Math.min(availW / cols, availH / rows)));
     boardEl.style.gridTemplateColumns = `repeat(${cols}, ${cell}px)`;
     boardEl.style.gridAutoRows = `${cell}px`;
-    boardEl.style.fontSize = `${Math.round(cell * 0.55)}px`;
+    boardEl.style.fontSize = `${Math.round(cell * 0.72)}px`;
   }
 
   // ---- 操作 ----
@@ -366,7 +366,10 @@ const CSS = `
 .pm-board{display:grid;gap:6px;background:var(--bg-elev);padding:6px;border-radius:12px}
 
 /* カード */
-.pm-card{position:relative;border:none;margin:0;padding:0;border-radius:10px;font-family:inherit;line-height:1;
+/* font-size:inherit で盤(.pm-board)の font-size を継承する。button は既定で font-size を
+   継承しない（main.css の button リセットも font-family だけ）ため、これがないと絵文字が
+   UA既定サイズ(≈13px)のまま小さくなる。絵文字(textContent)と裏の？(::after .62em)の両方に効く */
+.pm-card{position:relative;border:none;margin:0;padding:0;border-radius:10px;font-family:inherit;font-size:inherit;line-height:1;
   background:linear-gradient(135deg,#6c5ce7,#4a58c0);box-shadow:0 2px 5px rgba(0,0,0,.25);
   transition:transform .12s ease;display:flex;align-items:center;justify-content:center}
 .pm-card::after{content:'？';font-size:.62em;font-weight:900;color:rgba(255,255,255,.75)}
