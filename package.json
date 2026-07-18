@@ -1,7 +1,7 @@
 {
   "name": "game100",
   "private": true,
-  "version": "0.67.0",
+  "version": "0.80.0",
   "type": "module",
   "description": "GAME100 - 100種類のミニゲームで遊べるオフライン対応PWA",
   "license": "MIT",

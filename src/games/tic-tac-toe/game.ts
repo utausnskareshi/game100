@@ -157,7 +157,7 @@ export function createGame(ctx: GameContext): IGame {
     const cell = Math.max(56, Math.min(110, Math.floor(Math.min(availW, availH) / 3) - 6));
     boardEl.style.gridTemplateColumns = `repeat(3, ${cell}px)`;
     boardEl.style.gridAutoRows = `${cell}px`;
-    boardEl.style.fontSize = `${Math.round(cell * 0.62)}px`;
+    boardEl.style.fontSize = `${Math.round(cell * 0.8)}px`;
   }
 
   // ---- 局の進行 ----
@@ -386,8 +386,8 @@ const CSS = `
 .tt-score{margin-left:10px;font-size:14px;color:var(--text)}
 .tt-board{display:grid;gap:6px;background:var(--bg-elev2);padding:10px;border-radius:16px}
 .tt-cell{border:none;margin:0;padding:0;display:flex;align-items:center;justify-content:center;box-sizing:border-box;
-  background:var(--bg-elev1,rgba(255,255,255,.06));border-radius:12px;line-height:1;font-family:inherit;font-weight:800;
-  color:var(--text)}
+  background:var(--bg-elev1,rgba(255,255,255,.06));border-radius:12px;line-height:1;font-family:inherit;font-size:inherit;
+  font-weight:800;color:var(--text);overflow:hidden}
 .tt-cell:disabled{cursor:default;opacity:1}
 .tt-o{color:#e0524a}
 .tt-x{color:#4a7de0}

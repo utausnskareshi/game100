@@ -139,8 +139,10 @@ export function createGame(ctx: GameContext): IGame {
       if (ball.x > GUTTER_R - BALL_R) { ball.x = GUTTER_R - BALL_R; ball.vx = -Math.abs(ball.vx) * 0.2; }
       // ボール vs ピン: ボールは重いので ほとんど減速せず つらぬく（奥のピンまで届く）。
       // 速く芯に当てるほど ピンが激しく散る＝「衝撃半径」で 近くのピンも はじき飛ばす。
+      // ボールがピンを たおす強さ。芯に強く当てたときだけ大きく散るよう控えめに調整（ストライクは
+      // 「よい狙い＋じゅうぶんな強さ」の両方が要る＝出やすすぎない。弱い/ズレた球は1本残りやすい）。
       const bs = Math.hypot(ball.vx, ball.vy);
-      const shock = clamp((bs - 400) / 22, 0, 20); // 速いほど広く散る（芯に強く当てれば たおれやすい）
+      const shock = clamp((bs - 540) / 45, 0, 6); // 速いほど広く散る（芯に強く当てれば たおれやすい）
       for (const p of pins) {
         if (p.down) continue; // たおれたピンには もう当てない（減速しすぎ防止）
         const dx = p.x - ball.x;
@@ -155,9 +157,9 @@ export function createGame(ctx: GameContext): IGame {
             p.x = ball.x + nx * min; // 直接接触は 完全に押し出す
             p.y = ball.y + ny * min;
           }
-          p.vx = ball.vx * 0.6 + nx * bs * 0.7;
-          p.vy = ball.vy * 0.6 + ny * bs * 0.7;
-          if (d < min) { ball.vx *= 0.985; ball.vy *= 0.985; } // 直接当たりでも ほぼ減速せず つらぬく
+          p.vx = ball.vx * 0.5 + nx * bs * 0.34;
+          p.vy = ball.vy * 0.5 + ny * bs * 0.34;
+          if (d < min) { ball.vx *= 0.85; ball.vy *= 0.85; } // 直接当たりで減速（弱い球は奥まで届かない＝強さも大事）
           ctx.sfx('tick');
         }
       }
@@ -187,7 +189,7 @@ export function createGame(ctx: GameContext): IGame {
     while (changed && guard++ < 12) {
       changed = false;
       for (const p of pins) {
-        if (!p.down || Math.hypot(p.vx, p.vy) < 130) continue; // 勢いよく飛んだ たおれピンだけが なぎ倒す
+        if (!p.down || Math.hypot(p.vx, p.vy) < 120) continue; // 勢いよく飛んだ たおれピンだけが なぎ倒す
         for (const q of pins) {
           if (q.down) continue;
           if (Math.hypot(p.x - q.x, p.y - q.y) < CASCADE_DIST) {

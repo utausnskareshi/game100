@@ -15,9 +15,9 @@ export const LANE_W = 360;
 export const PIN_R = 9;
 export const BALL_R = 13;
 /** ピンが 定位置から この距離いじょう動いたら「たおれた」（本物のピンは 少し当たれば たおれる） */
-export const KNOCK_DIST = 7;
+export const KNOCK_DIST = 8;
 /** 動いている たおれピンが この距離いない の立ちピンを なぎ倒す（連鎖・なだれ） */
-export const CASCADE_DIST = 21;
+export const CASCADE_DIST = 12;
 
 /** 10本のピンの定位置（トップダウン・手前=1本 / 奥=4本） */
 export function pinLayout(): Vec[] {
