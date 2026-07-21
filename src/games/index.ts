@@ -33,8 +33,28 @@ const ICON_SOLITAIRE =
   "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#0e6b3d'/><g stroke='#c3ccdd' stroke-width='1.5'><rect x='20' y='30' width='34' height='46' rx='5' fill='#fff' transform='rotate(-12 37 53)'/><rect x='34' y='26' width='34' height='46' rx='5' fill='#fff'/></g><text x='40' y='52' font-family='sans-serif' font-size='22' font-weight='bold' fill='#d3213a' text-anchor='middle'>A</text><text x='40' y='68' font-family='sans-serif' font-size='16' fill='#d3213a' text-anchor='middle'>♥</text></svg>";
 const ICON_PLATES =
   "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#571e2e'/><line x1='50' y1='44' x2='50' y2='84' stroke='#8a5a34' stroke-width='6' stroke-linecap='round'/><ellipse cx='50' cy='86' rx='16' ry='5' fill='#5f3d23'/><ellipse cx='50' cy='38' rx='27' ry='9.5' fill='#f2f3fb' stroke='#3d7df0' stroke-width='3.5' transform='rotate(-9 50 38)'/><circle cx='42' cy='35' r='2.2' fill='#2a2340'/><circle cx='56' cy='33' r='2.2' fill='#2a2340'/><path d='M17 26 q7 -9 16 -11' stroke='#ffd54a' stroke-width='3.5' fill='none' stroke-linecap='round'/><path d='M83 22 q-7 -7 -15 -9' stroke='#ffd54a' stroke-width='3.5' fill='none' stroke-linecap='round'/></svg>";
+const ICON_PK =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#2f7a3c'/><rect x='0' y='0' width='100' height='26' fill='#2c3550'/><g stroke='#f2f3fb' stroke-width='4' fill='none'><path d='M18 62 V30 H82 V62'/></g><g stroke='rgba(242,243,251,.4)' stroke-width='1.2'><path d='M28 30 V60 M38 30 V60 M48 30 V60 M58 30 V60 M68 30 V60 M18 40 H82 M18 50 H82'/></g><circle cx='50' cy='74' r='12' fill='#fff' stroke='#2a3350' stroke-width='1.5'/><circle cx='50' cy='74' r='4' fill='#2a3350'/><circle cx='58' cy='68' r='2.2' fill='#2a3350'/><circle cx='42' cy='68' r='2.2' fill='#2a3350'/><circle cx='44' cy='81' r='2.2' fill='#2a3350'/><circle cx='56' cy='81' r='2.2' fill='#2a3350'/></svg>";
+const ICON_BOXING =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#181228'/><g stroke='#cdd6f5' stroke-width='3'><line x1='4' y1='26' x2='96' y2='26'/><line x1='4' y1='44' x2='96' y2='44' stroke='#d84a6a'/></g><circle cx='50' cy='58' r='26' fill='#e0483c'/><circle cx='41' cy='49' r='8' fill='#ff8a7a'/><rect x='40' y='80' width='20' height='12' rx='6' fill='#b83a30'/><path d='M20 14 l4 8 M28 10 l1 9 M12 20 l7 5' stroke='#ffd54a' stroke-width='3' stroke-linecap='round'/></svg>";
+const ICON_CLAY =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#7ec8f0'/><path d='M8 86 q22 -10 42 0 q22 10 42 0 v14 h-84 z' fill='#5da24a'/><ellipse cx='42' cy='38' rx='21' ry='9.5' fill='#e8762a' stroke='#a94e16' stroke-width='2.5'/><ellipse cx='39' cy='35' rx='9' ry='3.4' fill='#ffb26e'/><g stroke='#183048' stroke-width='3.5' fill='none' stroke-linecap='round'><circle cx='66' cy='60' r='13' stroke-dasharray='5.5 5'/><line x1='66' y1='42' x2='66' y2='50'/><line x1='66' y1='70' x2='66' y2='78'/><line x1='48' y1='60' x2='56' y2='60'/><line x1='76' y1='60' x2='84' y2='60'/></g></svg>";
 const ICON_TRAIN =
   "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#3f7a31'/><g stroke='#46403a' stroke-width='11' fill='none' stroke-linecap='round'><path d='M50 90 V58'/><path d='M50 58 Q50 46 40 39 L26 28'/><path d='M50 58 Q50 46 60 39 L74 28'/></g><g stroke='#cfd5e2' stroke-width='2.5' fill='none' stroke-linecap='round'><path d='M50 90 V58'/><path d='M50 58 Q50 46 40 39 L26 28'/><path d='M50 58 Q50 46 60 39 L74 28'/></g><circle cx='50' cy='58' r='8' fill='#10182e' stroke='#ffd54a' stroke-width='2.5'/><rect x='60' y='16' width='26' height='16' rx='6' fill='#e0483c' stroke='#10182e' stroke-width='2' transform='rotate(38 73 24)'/><circle cx='22' cy='20' r='6' fill='#3d7df0'/></svg>";
+const ICON_MARBLE =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#2a3550'/><g fill='#8a97b8'><circle cx='30' cy='30' r='4'/><circle cx='54' cy='30' r='4'/><circle cx='78' cy='30' r='4'/><circle cx='42' cy='46' r='4'/><circle cx='66' cy='46' r='4'/><circle cx='30' cy='62' r='4'/><circle cx='54' cy='62' r='4'/><circle cx='78' cy='62' r='4'/></g><circle cx='38' cy='20' r='8' fill='#e0483c'/><circle cx='35' cy='17' r='2.4' fill='rgba(255,255,255,.7)'/><circle cx='64' cy='38' r='8' fill='#3d7df0'/><circle cx='61' cy='35' r='2.4' fill='rgba(255,255,255,.7)'/><g stroke-width='4' fill='none'><path d='M12 88 a12 12 0 0 1 24 0' stroke='#e0483c'/><path d='M38 88 a12 12 0 0 1 24 0' stroke='#3d7df0'/><path d='M64 88 a12 12 0 0 1 24 0' stroke='#ffd54a'/></g></svg>";
+const ICON_FISH =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#12466e'/><g fill='#9fc6e8'><ellipse cx='30' cy='30' rx='7' ry='4'/><path d='M23 30 l-6 -4 v8 z'/><ellipse cx='52' cy='24' rx='7' ry='4'/><path d='M45 24 l-6 -4 v8 z'/><ellipse cx='40' cy='44' rx='7' ry='4'/><path d='M33 44 l-6 -4 v8 z'/><ellipse cx='62' cy='40' rx='7' ry='4'/><path d='M55 40 l-6 -4 v8 z'/><ellipse cx='30' cy='58' rx='7' ry='4'/><path d='M23 58 l-6 -4 v8 z'/><ellipse cx='52' cy='60' rx='7' ry='4'/><path d='M45 60 l-6 -4 v8 z'/></g><g fill='#ffb14a'><ellipse cx='68' cy='76' rx='13' ry='7.5'/><path d='M56 76 l-11 -7 v14 z'/></g><circle cx='73' cy='74' r='2' fill='#173048'/><circle cx='34' cy='29' r='1.4' fill='#173048'/><circle cx='56' cy='23' r='1.4' fill='#173048'/><circle cx='44' cy='43' r='1.4' fill='#173048'/><circle cx='66' cy='39' r='1.4' fill='#173048'/><circle cx='34' cy='57' r='1.4' fill='#173048'/><circle cx='56' cy='59' r='1.4' fill='#173048'/></svg>";
+const ICON_DOMINO =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#2e5f8a'/><path d='M14 74 q30 -8 44 -30' stroke='#d5c8a8' stroke-width='14' fill='none' stroke-linecap='round'/><g stroke='#173048' stroke-width='1.5'><rect x='16' y='58' width='7' height='20' rx='2' fill='#ff6b8a'/><rect x='30' y='54' width='7' height='20' rx='2' fill='#ffb14a' transform='rotate(8 33 64)'/><rect x='43' y='47' width='7' height='20' rx='2' fill='#ffd54a' transform='rotate(22 46 57)'/><rect x='52' y='38' width='7' height='20' rx='2' fill='#8ae08a' transform='rotate(46 55 48)'/><rect x='56' y='28' width='7' height='20' rx='2' fill='#7ec8f0' transform='rotate(78 59 38)'/></g><path d='M74 20 a8 8 0 0 1 8 8 l2 6 h-20 l2 -6 a8 8 0 0 1 8 -8 z' fill='#ffd54a' stroke='#b8862a' stroke-width='2'/><circle cx='74' cy='37' r='2.5' fill='#b8862a'/><g stroke='#ffd54a' stroke-width='2.5' stroke-linecap='round'><path d='M60 14 l5 5 M88 14 l-5 5'/></g></svg>";
+const ICON_WATERDIG =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#8a6a42'/><rect x='0' y='0' width='100' height='18' rx='10' fill='#8fd0f0'/><path d='M46 4 h8 v14 h-8 z' fill='#6a7a8a'/><path d='M46 18 h8 v26 l14 0 v18 h-8 v-10 l-14 0 z' fill='#3d9df0'/><path d='M46 18 h8 v10 h-8 z' fill='#7ec8f0'/><circle cx='24' cy='44' r='9' fill='#8a8f98'/><circle cx='72' cy='30' r='7' fill='#8a8f98'/><g transform='translate(64 74)'><path d='M0 8 q0 -10 0 -14' stroke='#3f8a4a' stroke-width='3' fill='none'/><circle cx='-5' cy='-8' r='4.5' fill='#ff9ad5'/><circle cx='5' cy='-8' r='4.5' fill='#ff9ad5'/><circle cx='0' cy='-13' r='4.5' fill='#ff9ad5'/><circle cx='0' cy='-8' r='3' fill='#ffd54a'/></g><path d='M20 84 l10 -10 m0 10 l-10 -10' stroke='#5f452a' stroke-width='0' fill='none'/><g transform='rotate(40 26 72)'><rect x='23' y='58' width='6' height='20' rx='2' fill='#8a5a2a'/><path d='M20 78 h12 l-3 10 h-6 z' fill='#c9ccd8'/></g></svg>";
+const ICON_BALLOON =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#8fd0f0'/><path d='M50 84 q-4 -8 2 -14' stroke='#8a6a4a' stroke-width='2.5' fill='none'/><ellipse cx='50' cy='44' rx='24' ry='27' fill='#ff6b8a' stroke='#d84868' stroke-width='2.5'/><path d='M44 71 l12 0 -6 8 z' fill='#d84868'/><ellipse cx='41' cy='33' rx='6' ry='8' fill='rgba(255,255,255,.55)' transform='rotate(-24 41 33)'/><g stroke='#3a2a2a' stroke-width='2.4' stroke-linecap='round'><path d='M40 42 l6 4 M40 50 l6 -4'/><path d='M60 42 l-6 4 M60 50 l-6 -4'/></g><circle cx='50' cy='55' r='3' fill='none' stroke='#3a2a2a' stroke-width='2'/><g stroke='#e05a4a' stroke-width='3' stroke-linecap='round'><path d='M16 30 l6 3 M14 44 l7 0 M17 58 l6 -3'/><path d='M84 30 l-6 3 M86 44 l-7 0 M83 58 l-6 -3'/></g></svg>";
+const ICON_TOPSUMO =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#31214a'/><circle cx='50' cy='52' r='37' fill='#8a6a34'/><circle cx='50' cy='52' r='33' fill='#d8b56a'/><circle cx='50' cy='52' r='26' fill='none' stroke='#c39c52' stroke-width='2'/><g><circle cx='38' cy='44' r='11' fill='#3d7df0' stroke='#1e3f85' stroke-width='2'/><path d='M31 40 a9 9 0 0 1 13 -1' stroke='#cfe2ff' stroke-width='2.5' fill='none' stroke-linecap='round'/><circle cx='38' cy='44' r='2.6' fill='#f5f2e8'/></g><g><circle cx='63' cy='61' r='11' fill='#e0483c' stroke='#8a2018' stroke-width='2'/><path d='M56 57 a9 9 0 0 1 13 -1' stroke='#ffd0c2' stroke-width='2.5' fill='none' stroke-linecap='round'/><circle cx='63' cy='61' r='2.6' fill='#f5f2e8'/></g><path d='M18 22 a34 34 0 0 1 15 -9' stroke='#9fe3ff' stroke-width='3.5' fill='none' stroke-linecap='round'/><path d='M82 82 a34 34 0 0 1 -15 9' stroke='#ffd54a' stroke-width='3.5' fill='none' stroke-linecap='round'/></svg>";
+const ICON_SONAR =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#0b2444'/><g fill='none' stroke='#7ee6ff' stroke-linecap='round'><circle cx='34' cy='32' r='11' stroke-width='3.5' opacity='.95'/><circle cx='34' cy='32' r='23' stroke-width='3.5' opacity='.55'/><circle cx='34' cy='32' r='35' stroke-width='3.5' opacity='.28'/></g><circle cx='34' cy='32' r='4' fill='#e8f6ff'/><path d='M44 72 q10 -12 26 -12 q16 0 20 9 q3 7 -6 11 q-14 6 -30 2 q-12 -3 -10 -10 z' fill='#3d7df0'/><path d='M82 62 l12 -10 -3 13 11 4 -14 4 z' fill='#3d7df0'/><circle cx='56' cy='68' r='2.4' fill='#0b2444'/><path d='M52 78 q6 3 12 1' stroke='#0b2444' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>";
 
 export const games: GameMeta[] = [
   // === ここに新しいゲームを追記 ===
@@ -2996,6 +3016,378 @@ export const games: GameMeta[] = [
     icon: { emoji: '🧊' },
     addedIn: '0.80.0',
     load: () => import('./ice-sweep/game'),
+  },
+  {
+    id: 'clay-shoot',
+    no: 81,
+    title: 'クレーしゃげき',
+    kana: 'くれーしゃげき',
+    description: '「プル！」の合図で飛び出す クレー（円盤）を タップで撃ち落とそう！弾数はかぎられているよ。全20枚、後半は2枚同時のダブル！',
+    category: 'reflex',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 命中20+むだ撃ちなし10＋ダブル両取り20＋れんぞく2×min(n-1,10)。理論最大1010（完璧ボット実証）・実機要調整
+    medals: { bronze: 400, silver: 650, gold: 880 },
+    timeToPlay: 'short',
+    help: {
+      goal: '「プル！」の合図で 放出台から クレー（オレンジの円盤）が 飛び出すよ。にげられる前に タップで撃ち落とそう！ぜんぶで20枚。',
+      controls: [
+        '画面をタップ：その場所へ 発射（クレーの近くなら 命中！）',
+        'のこり弾に ちゅうい（単発は2発・ダブルは3発）。弾切れは カチッ',
+        '後半は 2枚同時の「ダブル」。1枚ずつ おちついて ねらおう',
+      ],
+      tips: [
+        'むだ撃ちせずに 当てると クリーンショットボーナス +10！',
+        'れんぞくで 当てるほど ボーナスアップ（さいだい+20）',
+        'ダブルを 両方おとすと さらに +20！',
+      ],
+    },
+    achievements: [
+      { id: 'first-hit', name: 'はつめいちゅう', desc: 'はじめて クレーを撃ち落とした' },
+      { id: 'streak-8', name: 'れんぞくヒット', desc: '8枚 れんぞくで 撃ち落とした' },
+      { id: 'double-both', name: 'ダブルりょうどり', desc: 'ダブルの2枚を 両方 撃ち落とした' },
+      { id: 'clean-10', name: 'クリーンシューター', desc: 'むだ撃ちなしの命中を 1プレイで10回' },
+      { id: 'all-20', name: 'パーフェクト', desc: '20枚 ぜんぶ 撃ち落とした', secret: true },
+      { id: 'score-hi', name: 'しゃげきの達人', desc: '880点 いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🍊', svg: ICON_CLAY },
+    addedIn: '0.90.0',
+    load: () => import('./clay-shoot/game'),
+  },
+  {
+    id: 'boxing',
+    no: 82,
+    title: 'ボクシング',
+    kana: 'ぼくしんぐ',
+    description: '相手の予備動作を見て スワイプでよけ、すきに タップでカウンター！フェイントもある 読み合いの3ラウンド。むずかしい！',
+    category: 'reflex',
+    orientation: 'portrait',
+    scoring: 'points',
+    // よけ5＋カウンター20(ジャスト+10)＋連続2×min(n-1,10)＋KO50+残ハート×20。完璧ボット較正・実機要調整
+    medals: { bronze: 500, silver: 900, gold: 1400 },
+    timeToPlay: 'mid',
+    help: {
+      goal: '相手のグローブが 光ったら パンチのあいず！ただしく よけると「すき」ができるよ。すきに タップで カウンター！3人ぬきで チャンピオンだ。',
+      controls: [
+        'スワイプ＝よける（左のグローブが光ったら 右へ・右なら 左へ・ストレートは 下にしゃがむ）',
+        'タップ＝パンチ（よけた直後の「すき」だけ 当たる。ほかは ガードされちゃう）',
+        'ハートが0になると まけ。ラウンドごとに かいふくするよ',
+      ],
+      tips: [
+        '光ってから打つまでが どんどん短くなる。予備動作に しゅうちゅう！',
+        '光ったのに打ってこない＝フェイント！すぐ逆から 本命がくるよ',
+        'すきの前半で当てると ジャストカウンター +10！',
+      ],
+    },
+    achievements: [
+      { id: 'first-counter', name: 'はつカウンター', desc: 'はじめて カウンターを当てた' },
+      { id: 'dodge-15', name: 'よけの達人', desc: '1プレイで 15回 よけた' },
+      { id: 'feint-dodge', name: 'フェイントみやぶり', desc: 'フェイント直後の本命を よけた' },
+      { id: 'champion', name: 'チャンピオン', desc: '3ラウンドぜんぶ KOした' },
+      { id: 'no-damage', name: 'ノーダメージKO', desc: '1発ももらわずに ラウンドをKOした', secret: true },
+      { id: 'score-hi', name: 'ボクシングの達人', desc: '1500点 いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🥊', svg: ICON_BOXING },
+    addedIn: '0.90.0',
+    load: () => import('./boxing/game'),
+  },
+  {
+    id: 'pk-battle',
+    no: 83,
+    title: 'PKたいけつ',
+    kana: 'ぴーけーたいけつ',
+    description: 'ドラッグだけで ける→まもるを5本ずつのPK戦！すみを ねらう勇気と、フェイントを見やぶる読み。サドンデスもある むずかしい対決。',
+    category: 'action',
+    orientation: 'portrait',
+    scoring: 'points',
+    // ゴール30(すみジャスト+20)＋セーブ40＋勝利100(SD勝ち130)/引分50。完璧ボット550=理論最大・実機要調整
+    medals: { bronze: 200, silver: 350, gold: 500 },
+    timeToPlay: 'mid',
+    help: {
+      goal: 'CPUと5本ずつのPK戦！けるときは すみを ねらってシュート、まもるときは 読んで飛びつこう。どうてんなら サドンデス（さいだい3本）！',
+      controls: [
+        'ける: ボールから ゴールへ ドラッグ → はなすと シュート（ガイドの◎が ねらい）',
+        'まもる: シュートの しゅんかんに 左右へドラッグ（うえ＝まん中ジャンプ）',
+        'はやく飛びすぎると 読まれて 逆を突かれるよ',
+      ],
+      tips: [
+        'すみギリギリ（金色の◎）は キーパーが どっちに飛んでも 届かない！',
+        'でも ねらいすぎると ポストの外…。まん中は ぜったい止められちゃう',
+        '助走中の 👀ヒントは 信頼度70%。うそのときも ある！',
+      ],
+    },
+    achievements: [
+      { id: 'first-goal', name: 'はつゴール', desc: 'はじめて シュートを きめた' },
+      { id: 'first-save', name: 'はつセーブ', desc: 'はじめて シュートを とめた' },
+      { id: 'corner-3', name: 'すみっこシューター', desc: '1プレイで すみジャストを 3回 きめた' },
+      { id: 'mind-read', name: 'ぎゃくよみセーブ', desc: 'うそのヒントに だまされず とめた' },
+      { id: 'perfect-5', name: 'かんぜん勝利', desc: '5-0で 勝った', secret: true },
+      { id: 'score-hi', name: 'PKの達人', desc: '500点 いじょう とった', secret: true },
+    ],
+    icon: { emoji: '⚽', svg: ICON_PK },
+    addedIn: '0.90.0',
+    load: () => import('./pk-battle/game'),
+  },
+  {
+    id: 'echo-sonar',
+    no: 84,
+    title: 'こだまソナー',
+    kana: 'こだまそなー',
+    description: 'くらい海にかくれたクジラを、こだまの「輪」でさがす頭脳ソナー！輪のかさなりを読んで、いる場所をずばりタップ。後半はニセこだまのクラゲも…！',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // みつけた100＋ピン数ボーナス(3回=80)＋どまんなか30＋はやさ最大60＋クラゲの海50。運にたよらない最適=1450（3ピン・ボット実証）・実機要調整
+    medals: { bronze: 350, silver: 650, gold: 1000 },
+    timeToPlay: 'mid',
+    help: {
+      goal: 'くらい海のどこかに クジラがかくれているよ。タップで いしを落とすと、クジラまでの きょりが「光る輪」になって返ってくる。輪と輪の かさなる場所を ずばりタップして、5とう ぜんぶ つかまえよう！',
+      controls: [
+        'タップ＝いしを落とす。波紋がクジラにあたると、タップした場所を中心に「きょりの輪」が光る',
+        '輪の上のどこかにクジラがいる。2〜3回タップして、輪のかさなる場所をさがそう',
+        'クジラの真上をタップできたらキャッチ！タップできる回数にはかぎりがあるよ',
+      ],
+      tips: [
+        '輪はすぐ消えちゃう。中心の点も目じるしに、いそいで頭の中でかさねよう',
+        '少ない回数でみつけるほど高得点。ど真ん中ならさらにボーナス！',
+        'ピンクの輪はクラゲのニセこだま。水色の輪だけを信じて！',
+        'こだまの音は、近いほど高い音だよ',
+      ],
+    },
+    achievements: [
+      { id: 'first-catch', name: 'はじめてのクジラ', desc: 'はじめてクジラをつかまえた' },
+      { id: 'three-ping', name: 'さんかくそくりょう', desc: 'タップ3回いないでつかまえた' },
+      { id: 'center-hit', name: 'どまんなか', desc: 'クジラのど真ん中をタップしてつかまえた' },
+      { id: 'all-whales', name: 'クジラマスター', desc: '1プレイで5とうぜんぶつかまえた' },
+      { id: 'jelly-dodge', name: 'クラゲにだまされない', desc: 'クラゲの海で、クラゲをつつかずにつかまえた', secret: true },
+      { id: 'score-hi', name: 'でんせつのソナーし', desc: '1200点いじょうとった', secret: true },
+    ],
+    icon: { emoji: '🐳', svg: ICON_SONAR },
+    addedIn: '0.90.0',
+    load: () => import('./echo-sonar/game'),
+  },
+  {
+    id: 'top-sumo',
+    no: 85,
+    title: 'コマずもう',
+    kana: 'こまずもう',
+    description: 'まわるコマのすもう3番勝負！スワイプでたいあたりして、おしだすか相手の回転を止めたらかち。たいあたりのたびに回転力がへる、つかいどころが勝負。',
+    category: 'action',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 勝利120/180/240＋おしだし40/ねばり勝ち20＋残り回転×0.6＋はやさ最大45＋3人ぬき100。プランナーボット911実証・実機要調整
+    medals: { bronze: 150, silver: 500, gold: 850 },
+    timeToPlay: 'mid',
+    help: {
+      goal: 'まわるコマどうしの すもう3番勝負！スワイプで じぶんのコマ（青）に たいあたりの いきおいをつけて、あいてを土俵の外へ おしだそう。あいての回転が先に止まっても かち！',
+      controls: [
+        'すきな場所をドラッグ→はなす：その方向へ たいあたり（ながく引くほど 強い）',
+        'たいあたりのたびに 回転力（青いゲージ）がへる。連打すると じぶんが先に止まっちゃう！',
+        '回転力が0になるか、土俵から出たら まけ',
+      ],
+      tips: [
+        '回転力が多いコマは「おもい」。ぶつかりあいで 押し勝てるよ',
+        'あいての うしろが 土俵のふちのときが おしだしチャンス！',
+        'にげまわって あいての回転切れを まつのも さくせん',
+      ],
+    },
+    achievements: [
+      { id: 'first-win', name: 'はつしろぼし', desc: 'はじめて とりくみに勝った' },
+      { id: 'push-out', name: 'おしだし！', desc: 'あいてを土俵の外に おしだして勝った' },
+      { id: 'champion', name: 'ゆうしょう', desc: '3にんぬきで ゆうしょうした' },
+      { id: 'few-swipe', name: 'わざあり', desc: 'たいあたり3回いないで 1ばん勝った' },
+      { id: 'spin-rich', name: 'よゆうのまい', desc: '回転力を50のこして勝った', secret: true },
+      { id: 'score-hi', name: 'よこづな', desc: '800点いじょうとった', secret: true },
+    ],
+    icon: { emoji: '🍥', svg: ICON_TOPSUMO },
+    addedIn: '0.90.0',
+    load: () => import('./top-sumo/game'),
+  },
+  {
+    id: 'balloon-pump',
+    no: 86,
+    title: 'ドキドキふうせん',
+    kana: 'どきどきふうせん',
+    description: 'おしてふくらませ、はなして きめる度胸くらべ！ふくらむほど高得点、でも限界をこえるとパンッ…。震えはじめてからが しょうぶ！',
+    category: 'timing',
+    orientation: 'portrait',
+    scoring: 'points',
+    // わりあい×100＋ゴールデン(90%+)40＋連続10×(n-1)cap40。完璧(99%)=1332・正直ボット較正・実機要調整
+    medals: { bronze: 400, silver: 700, gold: 1000 },
+    timeToPlay: 'short',
+    help: {
+      goal: 'おしている間だけ ふうせんがふくらむよ。大きいほど高得点！でも かくれた限界をこえると パンッ＝0点。ぜんぶで8こ、ゆうきを出して ギリギリをねらおう。',
+      controls: [
+        '画面をおしっぱなし：ふくらむ',
+        'ゆびをはなす：その大きさで きまり！',
+        '限界がちかづくと ふうせんが震えて カチカチ音がなる（震えが強いほど もうすぐパン）',
+      ],
+      tips: [
+        '震えはじめは 限界の72%。そこから「もうひとねばり」でゴールデン（90%以上）！',
+        '震えてから おなじくらいの時間の 3分の1くらい ねばると ゴールデンのあたり',
+        'ゴールデンを つづけると コンボボーナス',
+      ],
+    },
+    achievements: [
+      { id: 'first-golden', name: 'ゴールデン！', desc: 'はじめて90%以上で きめた' },
+      { id: 'streak-3', name: 'ゴールデンつづき', desc: '3こ れんぞくで ゴールデンにした' },
+      { id: 'no-pop', name: 'われしらず', desc: '1プレイで1回も パンさせなかった' },
+      { id: 'edge-97', name: 'きわきわ', desc: '97%以上で きめた', secret: true },
+      { id: 'comeback', name: 'まけずぎらい', desc: 'パンした つぎのふうせんで ゴールデンにした', secret: true },
+      { id: 'score-hi', name: 'ふうせんめいじん', desc: '1000点いじょうとった', secret: true },
+    ],
+    icon: { emoji: '🎈', svg: ICON_BALLOON },
+    addedIn: '0.90.0',
+    load: () => import('./balloon-pump/game'),
+  },
+  {
+    id: 'water-dig',
+    no: 87,
+    title: 'みずみちほり',
+    kana: 'みずみちほり',
+    description: 'すなをタップで掘って、泉の水を3つの花にとどけよう！水は下に落ちて、足元がかたいと横にひろがる。掘れる回数にはかぎりが…。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 開花100×3＋のこりシャベル×25＋はやさ最大80。パー+2掘り・リプレイボット1290実証・実機要調整
+    medals: { bronze: 400, silver: 750, gold: 1100 },
+    timeToPlay: 'mid',
+    help: {
+      goal: 'いずみからわく水を、すなを掘って3つの花🌷にとどけよう！ぜんぶさいたらクリア。シャベル（掘れる回数）にはかぎりがあるよ。',
+      controls: [
+        'すなをタップ：1マス掘る（岩⛰️は掘れない）',
+        '水は「下におちる」「足元がかたいと横にひろがる」。上にはのぼらない！',
+        'シャベルを使いきって水が止まると「みずぎれ」…。掘る前によく考えて',
+      ],
+      tips: [
+        '水のとおり道を 先にゆびでなぞってイメージしよう',
+        '横にすすめたいときは、その下を掘らないこと（足元がなくなると落ちちゃう）',
+        'のこりシャベルが多いほどボーナス！むだ掘りゼロをめざせ',
+      ],
+    },
+    achievements: [
+      { id: 'first-bloom', name: 'はじめてさいた', desc: 'はじめて花をさかせた' },
+      { id: 'level-clear', name: 'はなぞの', desc: '1つの花だんで3つぜんぶさかせた' },
+      { id: 'all-levels', name: 'ぜんめんクリア', desc: '3つの花だんをぜんぶクリアした' },
+      { id: 'no-waste', name: 'むだぼりゼロ', desc: 'ぴったりパーの回数でクリアした', secret: true },
+      { id: 'speedy', name: 'はやみず', desc: '30びょう以内に花だんをクリアした', secret: true },
+      { id: 'score-hi', name: 'みずのたくみ', desc: '1000点いじょうとった', secret: true },
+    ],
+    icon: { emoji: '💧', svg: ICON_WATERDIG },
+    addedIn: '0.90.0',
+    load: () => import('./water-dig/game'),
+  },
+  {
+    id: 'domino-topple',
+    no: 88,
+    title: 'ドミノたおし',
+    kana: 'どみのたおし',
+    description: 'コースにドミノをならべて、スタートで一気にたおそう！カーブとかいだんは つめて置かないと止まっちゃう。のこり枚数がボーナスに！',
+    category: 'chill',
+    orientation: 'portrait',
+    scoring: 'points',
+    // ベル150＋たおれ×4＋星×25＋のこり×12−やりなおし×30。ソルバボット1604実証・実機要調整
+    medals: { bronze: 400, silver: 800, gold: 1250 },
+    timeToPlay: 'mid',
+    help: {
+      goal: 'みちの上にドミノをならべて「スタート！」。先頭からぜんぶたおれて、さいごのベル🔔まで つながればクリア！',
+      controls: [
+        'みちをタップ：ドミノを置く／置いたドミノをタップ：はずす',
+        'ドミノの間の線が 緑＝とどく・赤＝とどかない（はなれすぎ）',
+        'ぜんぶ置けたら「スタート！」でたおす。とちゅうで止まったら 直して もういちど（−30点）',
+      ],
+      tips: [
+        'カーブとかいだんは とどく距離がみじかい。つめて置こう',
+        '⭐のわっかの上にも置いてたおすと ボーナス！',
+        'つかう枚数が少ないほど「のこりボーナス」。ギリギリの間隔にちょうせん！',
+      ],
+    },
+    achievements: [
+      { id: 'first-bell', name: 'はつベル', desc: 'はじめてベルを鳴らした' },
+      { id: 'stars-course', name: 'ほしぜんぶ', desc: '1つのコースで⭐をぜんぶ取った' },
+      { id: 'all-bells', name: 'ぜんコースクリア', desc: '3つのコースぜんぶでベルを鳴らした' },
+      { id: 'economy', name: 'せつやくめいじん', desc: 'ドミノを12まい以上のこしてクリアした', secret: true },
+      { id: 'one-shot', name: 'いっぱつどおし', desc: 'やりなおしなしで3コースクリアした', secret: true },
+      { id: 'score-hi', name: 'ドミノめいじん', desc: '1400点いじょうとった', secret: true },
+    ],
+    icon: { emoji: '🁢', svg: ICON_DOMINO },
+    addedIn: '0.90.0',
+    load: () => import('./domino-topple/game'),
+  },
+  {
+    id: 'fish-school',
+    no: 89,
+    title: 'おさかなリーダー',
+    kana: 'おさかなりーだー',
+    description: 'きみは先頭の魚！ドラッグで泳ぐと24ひきの群れがついてくる。網のすき間をくぐり、フグとうずしおをかわして、90秒みんなでゴールへ！',
+    category: 'action',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 生存×30＋プランクトン×5＋ぜんいん150。先導ボット較正・実機要調整
+    medals: { bronze: 350, silver: 600, gold: 850 },
+    timeToPlay: 'mid',
+    help: {
+      goal: 'ドラッグでリーダーをうごかすと、なかまの群れがついてくるよ。あみ・フグ・うずしおから群れをまもって、90秒間できるだけたくさん生きのこらせよう！',
+      controls: [
+        'ドラッグ：リーダーが指をおいかける（群れはあとからついてくる）',
+        'あみは「すき間」だけ通れる。みどりの印が すき間の予告！',
+        '点線＝1秒後にくる危険の予告。リーダーは小さいからすりぬけられるけど、なかまはつかまっちゃう',
+      ],
+      tips: [
+        'いそいで曲がると群れが のびて あぶない。あぶない時ほど ゆっくり小さく動こう',
+        'あみが見えたら はやめに すき間の下へ集合！',
+        'みどりのプランクトンをたべると ボーナス',
+      ],
+    },
+    achievements: [
+      { id: 'first-swim', name: 'かんそう！', desc: 'さいごまでおよぎきった' },
+      { id: 'keep-20', name: 'おおきなむれ', desc: 'なかまを20ぴき以上のこしてゴールした' },
+      { id: 'eat-30', name: 'たくさんたべた', desc: '1プレイでプランクトンを30こたべた' },
+      { id: 'net-5', name: 'あみくぐりめいじん', desc: 'あみを5回、ひとりもつかまらずにくぐった' },
+      { id: 'no-loss', name: 'ひとりもかけずに', desc: '24ひきぜんいんでゴールした', secret: true },
+      { id: 'score-hi', name: 'むれのカリスマ', desc: '900点いじょうとった', secret: true },
+    ],
+    icon: { emoji: '🐟', svg: ICON_FISH },
+    addedIn: '0.90.0',
+    load: () => import('./fish-school/game'),
+  },
+  {
+    id: 'marble-tilt',
+    no: 90,
+    title: 'ビーだまより分け',
+    kana: 'びーだまよりわけ',
+    description: 'スマホをかたむけて、落ちてくる色ビーだまをピンの森ごしに同じ色のゲートへ！後半は2〜3こ同時でおおいそがし。ドラッグでもあそべる。',
+    category: 'sensor',
+    orientation: 'portrait',
+    optionalSensors: ['motion'],
+    scoring: 'points',
+    // 正解10＋連続2×min(n-1,5)＋金30。理論最大600・PIDボット実証456（実力上限≈23/27）・実機要調整
+    medals: { bronze: 180, silver: 320, gold: 440 },
+    timeToPlay: 'short',
+    help: {
+      goal: '上から落ちてくるビーだまを、かたむきであやつって、下の同じ色のゲートに入れよう！ぜんぶで30こ。れんぞく正解でボーナス！',
+      controls: [
+        'スマホを左右にかたむける：ビーだまが横にころがる',
+        '画面を左右にドラッグしてもOK（センサーがなくてもあそべる）',
+        '✨金のビーだまは どのゲートに入れても +30！',
+      ],
+      tips: [
+        '画面の上の「つぎ」で、次に落ちてくる色がわかるよ',
+        '後半は2〜3こ同時！いちばん下のビーだまから先にあんないしよう',
+        'まちがえるとれんぞくボーナスが0に。あわてず、ピンのはねかえりを読もう',
+      ],
+    },
+    achievements: [
+      { id: 'first-sort', name: 'はじめてのより分け', desc: 'はじめて正しいゲートに入れた' },
+      { id: 'streak-10', name: 'れんぞく10', desc: '10こ れんぞくで正しく入れた' },
+      { id: 'gold-3', name: 'きんのビーだま', desc: '1プレイで金のビーだまを3こあつめた' },
+      { id: 'sort-20', name: 'より分けめいじん', desc: '1プレイで20こ正しく入れた' },
+      { id: 'near-perfect', name: 'ほぼパーフェクト', desc: '1プレイで23こ以上正しく入れた', secret: true },
+      { id: 'score-hi', name: 'ゲートマスター', desc: '450点いじょうとった', secret: true },
+    ],
+    icon: { emoji: '🔵', svg: ICON_MARBLE },
+    addedIn: '0.90.0',
+    load: () => import('./marble-tilt/game'),
   },
 ];
 
