@@ -364,28 +364,58 @@ export function createGame(ctx: GameContext): IGame {
     g.drawImage(off, 0, 0, W, H);
     const sorted = [...placed].map((s, i) => ({ s, i })).sort((a, b) => a.s - b.s);
 
-    // リンクの届き表示（build 中のみ）
+    // リンクの届き表示（build 中のみ）。
+    // 直線ではなく「コースの道に沿って」描き、届く所まで緑・届かない分を赤で示す。
+    // ＝角では届く距離（reach）が短くなる＝緑が短くなるので「つめて置く必要」が一目で分かる。
     if (mode === 'build') {
-      const links: { a: number; b: number; ok: boolean }[] = [];
+      const links: { a: number; b: number; reach: number }[] = [];
       if (sorted.length > 0) {
-        links.push({ a: 0, b: sorted[0]!.s, ok: sorted[0]!.s <= FIRST_REACH });
+        links.push({ a: 0, b: sorted[0]!.s, reach: FIRST_REACH });
         for (let k = 0; k + 1 < sorted.length; k++) {
           const g1 = sorted[k]!.s;
           const g2 = sorted[k + 1]!.s;
-          links.push({ a: g1, b: g2, ok: g2 - g1 <= reachBetween(path, course, g1, g2) });
+          links.push({ a: g1, b: g2, reach: reachBetween(path, course, g1, g2) });
         }
-        links.push({ a: sorted[sorted.length - 1]!.s, b: path.len, ok: path.len - sorted[sorted.length - 1]!.s <= BELL_REACH });
+        links.push({ a: sorted[sorted.length - 1]!.s, b: path.len, reach: BELL_REACH });
       }
-      for (const lk of links) {
-        const pa = path.posAt(lk.a);
-        const pb = path.posAt(lk.b);
-        g.strokeStyle = lk.ok ? 'rgba(80,170,90,.85)' : 'rgba(220,70,60,.9)';
-        g.lineWidth = 3;
-        g.setLineDash(lk.ok ? [] : [5, 4]);
+      // 道に沿った折れ線を s0..s1 で描く（角も正しく曲がる）
+      const strokePath = (s0: number, s1: number): void => {
         g.beginPath();
-        g.moveTo(pa.x, pa.y);
-        g.lineTo(pb.x, pb.y);
+        let first = true;
+        for (let s = s0; s < s1; s += 5) {
+          const p = path.posAt(s);
+          if (first) { g.moveTo(p.x, p.y); first = false; } else g.lineTo(p.x, p.y);
+        }
+        const pe = path.posAt(s1);
+        g.lineTo(pe.x, pe.y);
         g.stroke();
+      };
+      for (const lk of links) {
+        const limit = lk.a + lk.reach; // ここまで倒れが届く
+        const green = Math.min(lk.b, limit);
+        // 届く範囲＝緑（実線）
+        g.strokeStyle = 'rgba(90,190,100,.95)';
+        g.lineWidth = 4;
+        g.setLineDash([]);
+        strokePath(lk.a, green);
+        // 届かない分＝赤（破線）＋「ここまで」目印
+        if (lk.b > limit + 0.5) {
+          g.strokeStyle = 'rgba(230,80,70,.95)';
+          g.lineWidth = 3;
+          g.setLineDash([5, 4]);
+          strokePath(limit, lk.b);
+          g.setLineDash([]);
+          const lp = path.posAt(limit);
+          const hd = path.headingAt(limit);
+          const nx = Math.cos(hd + Math.PI / 2);
+          const ny = Math.sin(hd + Math.PI / 2);
+          g.strokeStyle = 'rgba(255,210,90,.95)';
+          g.lineWidth = 3;
+          g.beginPath();
+          g.moveTo(lp.x - nx * 8, lp.y - ny * 8);
+          g.lineTo(lp.x + nx * 8, lp.y + ny * 8);
+          g.stroke();
+        }
       }
       g.setLineDash([]);
     }

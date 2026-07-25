@@ -9,6 +9,11 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.99.0',
+    date: '2026-07-25',
+    notes: ['9種類のゲームを追加(合計99)。', 'ゲームのバランス調整をしました。'],
+  },
+  {
     version: '0.90.0',
     date: '2026-07-21',
     notes: ['10種類のゲームを追加(合計90)。', 'ゲームのバランス調整をしました。'],

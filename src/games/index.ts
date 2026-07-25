@@ -55,6 +55,24 @@ const ICON_TOPSUMO =
   "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#31214a'/><circle cx='50' cy='52' r='37' fill='#8a6a34'/><circle cx='50' cy='52' r='33' fill='#d8b56a'/><circle cx='50' cy='52' r='26' fill='none' stroke='#c39c52' stroke-width='2'/><g><circle cx='38' cy='44' r='11' fill='#3d7df0' stroke='#1e3f85' stroke-width='2'/><path d='M31 40 a9 9 0 0 1 13 -1' stroke='#cfe2ff' stroke-width='2.5' fill='none' stroke-linecap='round'/><circle cx='38' cy='44' r='2.6' fill='#f5f2e8'/></g><g><circle cx='63' cy='61' r='11' fill='#e0483c' stroke='#8a2018' stroke-width='2'/><path d='M56 57 a9 9 0 0 1 13 -1' stroke='#ffd0c2' stroke-width='2.5' fill='none' stroke-linecap='round'/><circle cx='63' cy='61' r='2.6' fill='#f5f2e8'/></g><path d='M18 22 a34 34 0 0 1 15 -9' stroke='#9fe3ff' stroke-width='3.5' fill='none' stroke-linecap='round'/><path d='M82 82 a34 34 0 0 1 -15 9' stroke='#ffd54a' stroke-width='3.5' fill='none' stroke-linecap='round'/></svg>";
 const ICON_SONAR =
   "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#0b2444'/><g fill='none' stroke='#7ee6ff' stroke-linecap='round'><circle cx='34' cy='32' r='11' stroke-width='3.5' opacity='.95'/><circle cx='34' cy='32' r='23' stroke-width='3.5' opacity='.55'/><circle cx='34' cy='32' r='35' stroke-width='3.5' opacity='.28'/></g><circle cx='34' cy='32' r='4' fill='#e8f6ff'/><path d='M44 72 q10 -12 26 -12 q16 0 20 9 q3 7 -6 11 q-14 6 -30 2 q-12 -3 -10 -10 z' fill='#3d7df0'/><path d='M82 62 l12 -10 -3 13 11 4 -14 4 z' fill='#3d7df0'/><circle cx='56' cy='68' r='2.4' fill='#0b2444'/><path d='M52 78 q6 3 12 1' stroke='#0b2444' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>";
+const ICON_FRUITSLICE =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#20304a'/><path d='M12 30 Q50 18 90 42' stroke='rgba(255,255,255,.85)' stroke-width='5' fill='none' stroke-linecap='round'/><path d='M17 58 A33 33 0 0 0 83 58 Z' fill='#57a832'/><path d='M22 58 A28 28 0 0 0 78 58 Z' fill='#eaf6d8'/><path d='M26 58 A24 24 0 0 0 74 58 Z' fill='#ff5a5a'/><g fill='#20242e'><ellipse cx='42' cy='68' rx='2.2' ry='3.4'/><ellipse cx='58' cy='68' rx='2.2' ry='3.4'/><ellipse cx='50' cy='76' rx='2.2' ry='3.4'/></g><circle cx='24' cy='40' r='3' fill='#ff5a5a'/><circle cx='80' cy='30' r='2.4' fill='#ffd54a'/></svg>";
+const ICON_CANDLECAKE =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#4a3560'/><ellipse cx='50' cy='84' rx='34' ry='6' fill='rgba(255,255,255,.18)'/><rect x='24' y='54' width='52' height='28' rx='7' fill='#f6d9c0'/><path d='M24 61 q6.5 8 13 0 q6.5 8 13 0 q6.5 8 13 0 q6.5 8 13 0 v-7 h-52 z' fill='#ffb3c6'/><g stroke-linecap='round'><line x1='38' y1='40' x2='38' y2='56' stroke='#ff6b8a' stroke-width='5'/><line x1='50' y1='36' x2='50' y2='56' stroke='#7ec8f0' stroke-width='5'/><line x1='62' y1='40' x2='62' y2='56' stroke='#8ae05a' stroke-width='5'/></g><g fill='#ffd54a'><ellipse cx='38' cy='34' rx='3.2' ry='5'/><ellipse cx='50' cy='30' rx='3.2' ry='5'/><ellipse cx='62' cy='34' rx='3.2' ry='5'/></g><g fill='rgba(255,120,40,.85)'><circle cx='38' cy='35' r='1.6'/><circle cx='50' cy='31' r='1.6'/><circle cx='62' cy='35' r='1.6'/></g><circle cx='50' cy='49' r='3' fill='#e0483c'/></svg>";
+const ICON_TERRITORY =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#1a2436'/><rect x='12' y='12' width='76' height='76' rx='7' fill='none' stroke='#2f8f6b' stroke-width='4'/><path d='M16 84 L16 54 L48 54 L48 38 L84 38 L84 84 Z' fill='#2f8f6b'/><path d='M16 54 L48 54 L48 38 L84 38' fill='none' stroke='#ffd54a' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/><circle cx='84' cy='38' r='5' fill='#eafff4' stroke='#1a2436' stroke-width='2'/><circle cx='32' cy='30' r='7' fill='#ff5a6a'/><circle cx='32' cy='30' r='2.4' fill='#fff'/></svg>";
+const ICON_TIMBER =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#bfe6f0'/><rect x='0' y='76' width='100' height='24' fill='#7fbf5a'/><g stroke='#7a4e28' stroke-width='2' fill='#a9713f'><rect x='38' y='28' width='24' height='21' rx='5'/><rect x='38' y='51' width='24' height='21' rx='5'/></g><line x1='62' y1='38' x2='82' y2='34' stroke='#8a5a2e' stroke-width='5' stroke-linecap='round'/><circle cx='85' cy='33' r='7' fill='#4faa54'/><line x1='18' y1='70' x2='33' y2='52' stroke='#6a4326' stroke-width='4' stroke-linecap='round'/><path d='M30 50 l13 -5 -2 13 z' fill='#c9ccd8' stroke='#8a9099' stroke-width='1'/></svg>";
+const ICON_FLOW =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#efe6d0'/><g stroke='rgba(120,100,70,.3)' stroke-width='2'><line x1='14' y1='38' x2='86' y2='38'/><line x1='14' y1='62' x2='86' y2='62'/><line x1='38' y1='14' x2='38' y2='86'/><line x1='62' y1='14' x2='62' y2='86'/></g><polyline points='26,26 26,62 62,62' fill='none' stroke='#e0483c' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'/><circle cx='26' cy='26' r='9' fill='#e0483c'/><circle cx='62' cy='62' r='9' fill='#e0483c'/><polyline points='74,26 74,74 38,74' fill='none' stroke='#3d7df0' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'/><circle cx='74' cy='26' r='9' fill='#3d7df0'/><circle cx='38' cy='74' r='9' fill='#3d7df0'/></svg>";
+const ICON_GRAVFLIP =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#10142a'/><rect x='0' y='0' width='24' height='100' fill='#2a3358'/><rect x='76' y='0' width='24' height='100' fill='#2a3358'/><rect x='24' y='0' width='3' height='100' fill='#3a4680'/><rect x='73' y='0' width='3' height='100' fill='#3a4680'/><g fill='#ff5a6a'><path d='M27 22 l15 8 -15 8 z'/><path d='M73 60 l-15 8 15 8 z'/></g><circle cx='38' cy='66' r='11' fill='#7fe0ff' stroke='#1a2340' stroke-width='2'/><circle cx='34' cy='64' r='3' fill='#1a2340'/><g stroke='#ffd54a' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M40 40 H60'/><path d='M44 35 L39 40 44 45'/><path d='M56 35 L61 40 56 45'/></g></svg>";
+const ICON_DICE =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#efe6d0'/><g stroke='rgba(120,100,70,.28)' stroke-width='2' fill='none'><rect x='16' y='16' width='68' height='68'/><line x1='16' y1='38.7' x2='84' y2='38.7'/><line x1='16' y1='61.3' x2='84' y2='61.3'/><line x1='38.7' y1='16' x2='38.7' y2='84'/><line x1='61.3' y1='16' x2='61.3' y2='84'/></g><rect x='63' y='18' width='19' height='19' rx='3' fill='none' stroke='#e0483c' stroke-width='2.5'/><g fill='#e0483c'><circle cx='68.5' cy='23.5' r='1.7'/><circle cx='72.5' cy='27.5' r='1.7'/><circle cx='76.5' cy='31.5' r='1.7'/></g><rect x='20' y='60' width='24' height='24' rx='5' fill='#fbfbf7' stroke='#c2b596' stroke-width='2'/><g fill='#2a2a33'><circle cx='26' cy='66' r='2'/><circle cx='38' cy='66' r='2'/><circle cx='32' cy='72' r='2'/><circle cx='26' cy='78' r='2'/><circle cx='38' cy='78' r='2'/></g></svg>";
+const ICON_LASER =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#0d1226'/><path d='M9 30 H50 V64 H80' fill='none' stroke='#7ee6ff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/><g stroke='#cfe0ff' stroke-width='4' stroke-linecap='round'><line x1='43' y1='37' x2='57' y2='23'/><line x1='43' y1='57' x2='57' y2='71'/></g><path d='M80 54 l9 10 -9 10 -9 -10 z' fill='#ffd54a'/><circle cx='9' cy='30' r='4' fill='#7ee6ff'/><circle cx='28' cy='80' r='6' fill='#20242e' stroke='#ff5a5a' stroke-width='2'/></svg>";
+const ICON_MIRRORTWINS =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#171a2e'/><line x1='50' y1='14' x2='50' y2='86' stroke='rgba(180,200,255,.35)' stroke-width='2' stroke-dasharray='5 5'/><circle cx='30' cy='30' r='9' fill='none' stroke='#5aa0ff' stroke-width='3'/><circle cx='70' cy='30' r='9' fill='none' stroke='#ff7ab0' stroke-width='3'/><circle cx='30' cy='60' r='12' fill='#5aa0ff'/><circle cx='26' cy='57' r='2.6' fill='#12244a'/><circle cx='34' cy='57' r='2.6' fill='#12244a'/><circle cx='70' cy='60' r='12' fill='#ff7ab0'/><circle cx='74' cy='57' r='2.6' fill='#5a1e3a'/><circle cx='66' cy='57' r='2.6' fill='#5a1e3a'/></svg>";
 
 export const games: GameMeta[] = [
   // === ここに新しいゲームを追記 ===
@@ -3074,9 +3092,10 @@ export const games: GameMeta[] = [
         'ハートが0になると まけ。ラウンドごとに かいふくするよ',
       ],
       tips: [
+        '相手が光ると きいろの輪が縮むよ。輪が とじる＝パンチ着弾。とじる少し前に、出た むき（「みぎへ よける」等）どおり スワイプ！',
+        'よけると まん中に「タップ！」が出る＝カウンターのチャンス。金色（前半）で当てると ジャスト +10！',
         '光ってから打つまでが どんどん短くなる。予備動作に しゅうちゅう！',
         '光ったのに打ってこない＝フェイント！すぐ逆から 本命がくるよ',
-        'すきの前半で当てると ジャストカウンター +10！',
       ],
     },
     achievements: [
@@ -3293,11 +3312,11 @@ export const games: GameMeta[] = [
       goal: 'みちの上にドミノをならべて「スタート！」。先頭からぜんぶたおれて、さいごのベル🔔まで つながればクリア！',
       controls: [
         'みちをタップ：ドミノを置く／置いたドミノをタップ：はずす',
-        'ドミノの間の線が 緑＝とどく・赤＝とどかない（はなれすぎ）',
+        'ドミノの間は 道に沿って 緑＝とどく／赤＝とどかない で表示。きいろの線が「ここまで倒れる」限界だよ',
         'ぜんぶ置けたら「スタート！」でたおす。とちゅうで止まったら 直して もういちど（−30点）',
       ],
       tips: [
-        'カーブとかいだんは とどく距離がみじかい。つめて置こう',
+        'カーブとかいだんは 緑がみじかい＝とどく距離がみじかい。きいろの線の内がわに 次を置こう（つめて置く）',
         '⭐のわっかの上にも置いてたおすと ボーナス！',
         'つかう枚数が少ないほど「のこりボーナス」。ギリギリの間隔にちょうせん！',
       ],
@@ -3388,6 +3407,343 @@ export const games: GameMeta[] = [
     icon: { emoji: '🔵', svg: ICON_MARBLE },
     addedIn: '0.90.0',
     load: () => import('./marble-tilt/game'),
+  },
+  {
+    id: 'fruit-slice',
+    no: 91,
+    title: 'スパッとフルーツ',
+    kana: 'すぱっとふるーつ',
+    description: 'とんでくるフルーツを スワイプで スパッと切ろう！💣ばくだんを切ったり、フルーツを切りおとすと ライフがへる。1回のスワイプで まとめて切ると コンボ！',
+    category: 'reflex',
+    orientation: 'portrait',
+    scoring: 'points',
+    // フルーツ10点＋コンボ加点。ライフ3・実機playtest前提の仮値
+    medals: { bronze: 400, silver: 800, gold: 1300 },
+    timeToPlay: 'short',
+    help: {
+      goal: 'とんでくるフルーツを 指のスワイプで できるだけ たくさん 切ろう！💣ばくだんを切るか、フルーツを切りおとすと ライフがへって、3つで おしまい。',
+      controls: [
+        'スワイプ：指でなぞった線が フルーツを切る',
+        '1回のスワイプ（指を はなすまで）で 何こも切ると コンボで 高得点',
+        '💣ばくだんは 切らない！ フルーツは 落とさない！',
+      ],
+      tips: [
+        'フルーツが かたまった しゅんかんに 一気になぞると コンボがねらえる',
+        'ばくだんの近くのフルーツは むりせず 見のがしてOK',
+        'だんだん はやく・多くなる。おわりのほうは ばくだんも ふえるよ',
+      ],
+    },
+    achievements: [
+      { id: 'first-slice', name: 'はじめてスパッと', desc: 'フルーツをはじめて切った' },
+      { id: 'combo-3', name: 'トリプルスパッ', desc: '1回のスワイプで3こ切った' },
+      { id: 'no-miss-15', name: 'ノーミス15', desc: '15こ 連続で切った（落とさず・ばくだんも切らず）' },
+      { id: 'fruits-40', name: 'フルーツの山', desc: '1プレイで40こ切った' },
+      { id: 'combo-5', name: 'ファイブスパッ', desc: '1回のスワイプで5こ切った', secret: true },
+      { id: 'score-hi', name: 'フルーツはくし', desc: '1000点いじょうとった', secret: true },
+    ],
+    icon: { emoji: '🍉', svg: ICON_FRUITSLICE },
+    addedIn: '0.99.0',
+    load: () => import('./fruit-slice/game'),
+  },
+  {
+    id: 'candle-cake',
+    no: 92,
+    title: 'くるくるキャンドル',
+    kana: 'くるくるきゃんどる',
+    description: 'くるくる回るケーキに、タップでロウソクを1本ずつさそう！さした所が となりのロウソクに近すぎると ぶつかっちゃう。だんだん速く・本数が増える！',
+    category: 'timing',
+    orientation: 'portrait',
+    scoring: 'points',
+    // ロウソク10点＋ステージ/ノーミス加点。実機playtest前提の仮値
+    medals: { bronze: 200, silver: 400, gold: 700 },
+    timeToPlay: 'short',
+    help: {
+      goal: '回るケーキに タップで ロウソクをさそう。すでにあるロウソクに近すぎると「ぶつかった！」でライフがへる（3つでおしまい）。そのステージの本数を さしきると クリア！',
+      controls: [
+        'タップ：いま画面の下に来ている場所に ロウソクを1本さす',
+        'ロウソクどうしが 近すぎると ぶつかって ライフがへる',
+        'ステージが すすむほど 回転が速く・本数が多くなる',
+      ],
+      tips: [
+        'ロウソクとロウソクの すきまが 広いところを ねらってタップ',
+        'あわてず、1本ずつ ていねいに',
+        'ぶつけずに1ステージ クリアすると ボーナス！',
+      ],
+    },
+    achievements: [
+      { id: 'first-candle', name: 'はじめてのローソク', desc: 'ロウソクを1本さした' },
+      { id: 'clear-stage', name: 'デコレーションかんせい', desc: 'ステージを1つクリアした' },
+      { id: 'stage-5', name: 'ケーキマスター', desc: 'ステージ5に とうたつした' },
+      { id: 'candles-30', name: 'ローソク30本', desc: '1プレイで30本さした' },
+      { id: 'perfect-stage', name: 'ノーミスかざり', desc: '1つのステージを ぶつけずにクリアした', secret: true },
+      { id: 'score-hi', name: 'キャンドルの達人', desc: '500点いじょうとった', secret: true },
+    ],
+    icon: { emoji: '🎂', svg: ICON_CANDLECAKE },
+    addedIn: '0.99.0',
+    load: () => import('./candle-cake/game'),
+  },
+  {
+    id: 'territory-paint',
+    no: 93,
+    title: 'じんとりペイント',
+    kana: 'じんとりぺいんと',
+    description: '指でなぞって じんちを囲もう！囲んだ中がぬられて 自分の陣地に。うろつく敵に線をさわられたら アウト。エリアの75%を ぬればクリア！',
+    category: 'action',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 塗ったセル数＋ステージボーナス。実機playtest前提の仮値
+    medals: { bronze: 300, silver: 600, gold: 1000 },
+    timeToPlay: 'short',
+    help: {
+      goal: 'ふち（自分の陣地）から 指でなぞって 空きエリアへ入り、ぐるっと囲んで 陣地にもどると そのエリアがぬられる。エリアの75%を ぬれば ステージクリア！',
+      controls: [
+        'ドラッグ：なぞった通りに マーカーが進む（陣地→空きで 線を引きはじめる）',
+        '陣地にもどると 囲んだ中が いっきに ぬられる（敵のいない方がぬれる）',
+        '引いている線を 敵にさわられる／自分で横切ると ライフがへる',
+      ],
+      tips: [
+        '小さく囲めば 安全。大きく囲めば 一気にぬれるけど 敵にさわられやすい',
+        '敵から とおい場所を 囲もう',
+        'ステージが すすむと 敵がふえて 速くなる',
+      ],
+    },
+    achievements: [
+      { id: 'first-claim', name: 'はじめてのじんち', desc: 'はじめてエリアをぬった' },
+      { id: 'half', name: 'はんぶんこえた', desc: 'エリアの50%をこえてぬった' },
+      { id: 'clear-stage', name: 'せいはく！', desc: 'ステージをクリアした（75%）' },
+      { id: 'big-catch', name: 'いっきどり', desc: '1回で80マス以上を いっきにぬった' },
+      { id: 'stage-3', name: 'ぬりつぶし王', desc: 'ステージ3に とうたつした', secret: true },
+      { id: 'score-hi', name: 'じんとりマスター', desc: '1000点いじょうとった', secret: true },
+    ],
+    icon: { emoji: '🎨', svg: ICON_TERRITORY },
+    addedIn: '0.99.0',
+    load: () => import('./territory-paint/game'),
+  },
+  {
+    id: 'timber-chop',
+    no: 94,
+    title: 'トントンきこり',
+    kana: 'とんとんきこり',
+    description: '画面の左右をタップして 丸太をトントン切ろう！切るたび木が落ちてくる。自分の側に枝が来たら アウト。エネルギーが切れる前に どんどん切ろう！',
+    category: 'reflex',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1本10点。枝よけ＋エネルギー管理。実機playtest前提の仮値
+    medals: { bronze: 250, silver: 500, gold: 900 },
+    timeToPlay: 'short',
+    help: {
+      goal: '画面の左半分／右半分をタップして 丸太を切ろう。切るたび木が1つ落ちてくる。落ちてきた丸太の枝が 自分のいる側だと ぶつかって おしまい。エネルギーが切れても おしまい！',
+      controls: [
+        '左タップ：左から切る（きこりも左へ）／右タップ：右から切る',
+        '落ちてくる丸太の枝を見て、ぶつからない側を えらぶ',
+        'エネルギーは どんどん減る。切ると 回復するので 止まらずに！',
+      ],
+      tips: [
+        '1つ上の丸太の枝を見て、つぎに よける側を さきに決めておく',
+        '枝なしの丸太は どっちでもOK。テンポよく',
+        '切るほど 速く・枝が多くなる',
+      ],
+    },
+    achievements: [
+      { id: 'first-chop', name: 'はじめてのいっぽん', desc: '丸太を1本きった' },
+      { id: 'chop-25', name: 'まきわり25', desc: '1プレイで25本きった' },
+      { id: 'chop-50', name: 'たきぎの山', desc: '1プレイで50本きった' },
+      { id: 'full-power', name: 'まんタン！', desc: 'エネルギーをMAXまでためた' },
+      { id: 'quick-15', name: 'スピードきこり', desc: 'さいしょの15本を8びょういないできった', secret: true },
+      { id: 'chop-90', name: 'きこりマスター', desc: '1プレイで90本きった', secret: true },
+    ],
+    icon: { emoji: '🪓', svg: ICON_TIMBER },
+    addedIn: '0.99.0',
+    load: () => import('./timber-chop/game'),
+  },
+  {
+    id: 'flow-connect',
+    no: 95,
+    title: 'つなげてパイプ',
+    kana: 'つなげてぱいぷ',
+    description: '同じ色の●どうしを 指でなぞって つなごう！線は交差できない。全部つないで マスをぜんぶ うめたら クリア。だんだん大きくなる全5面。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 面クリア＋速さボーナス。実機playtest前提の仮値
+    medals: { bronze: 700, silver: 1200, gold: 1700 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    help: {
+      goal: '同じ色の●を 指でなぞって 線でつなごう。線どうしは 交差できない。ぜんぶの色をつないで、しかも マスをぜんぶ うめたら クリア！全5面。',
+      controls: [
+        'ドラッグ：●から 同じ色の●まで なぞってつなぐ',
+        '線をもどると 消える。ほかの色の線を なぞると そこで切れる',
+        '全部つなぐ＋全マスうめる ＝クリア（あいマスがあると まだ）',
+      ],
+      tips: [
+        'すみや かどの●から 先に考えると 解きやすい',
+        '「全マスうめる」がヒント：とおり道の少ない●から つなごう',
+        'はやく解くほど 高得点！',
+      ],
+    },
+    achievements: [
+      { id: 'first-connect', name: 'はじめてつながった', desc: '色をひとつ つないだ' },
+      { id: 'first-clear', name: '1めんクリア', desc: 'さいしょの面をクリアした' },
+      { id: 'clear-3', name: '3めんとっぱ', desc: '3面クリアした' },
+      { id: 'all-clear', name: 'ぜんめんクリア', desc: '全5面をクリアした' },
+      { id: 'speed-clear', name: 'サクッとクリア', desc: '目標時間より速く1面クリアした', secret: true },
+      { id: 'score-hi', name: 'パイプマスター', desc: '1200点いじょうとった', secret: true },
+    ],
+    icon: { emoji: '🔌', svg: ICON_FLOW },
+    addedIn: '0.99.0',
+    load: () => import('./flow-connect/game'),
+  },
+  {
+    id: 'gravity-flip',
+    no: 96,
+    title: 'じゅうりょくスイッチ',
+    kana: 'じゅうりょくすいっち',
+    description: 'タップで じゅうりょくを 左右に反転！かべを のぼりながら、トゲのない かべへ うつって よけよう。1回でも当たると おしまいの、高難度ワンボタン。',
+    category: 'action',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 距離(10px=1m=1点)。高難度・1ヒットでオーバー。実機playtest前提の仮値
+    medals: { bronze: 60, silver: 120, gold: 200 },
+    timeToPlay: 'short',
+    help: {
+      goal: 'かべを のぼっていくキャラを、タップで じゅうりょく反転させて 左右のかべを行き来させよう。かべから出る トゲに 当たらずに どこまで のぼれる？1回でも当たると おしまい。',
+      controls: [
+        'タップ：じゅうりょくが 左右反転（反対のかべへ うつる）',
+        'トゲのある かべから、ない かべへ 早めに うつる',
+        '横断ちゅう（まん中）は トゲに当たらない',
+      ],
+      tips: [
+        'トゲが 見えたら はやめに 反対がわへ',
+        'あわてず、1つずつ トゲを やりすごす',
+        'のぼるほど どんどん 速くなる！',
+      ],
+    },
+    achievements: [
+      { id: 'first-run', name: 'スタートダッシュ', desc: 'さいしょのくぎりまで のぼった' },
+      { id: 'run-60', name: '60mランナー', desc: '60mまで のぼった' },
+      { id: 'run-120', name: 'ベテランクライマー', desc: '120mまで のぼった' },
+      { id: 'flips-40', name: 'くるくる40', desc: '1プレイで40回 反転した' },
+      { id: 'run-200', name: 'じゅうりょくマスター', desc: '200mまで のぼった', secret: true },
+      { id: 'flips-90', name: '反転の達人', desc: '1プレイで90回 反転した', secret: true },
+    ],
+    icon: { emoji: '🔀', svg: ICON_GRAVFLIP },
+    addedIn: '0.99.0',
+    load: () => import('./gravity-flip/game'),
+  },
+  {
+    id: 'dice-roll',
+    no: 97,
+    title: 'コロコロダイス',
+    kana: 'ころころだいす',
+    description: 'スワイプで サイコロを 1マスずつ ころがそう！ころがすと 上の目が かわる。目標マスに「その目」で のせて スタンプ、全部で クリア。向きを 先読みする 高難度パズル。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 面クリア＋手数ボーナス。高難度・実機playtest前提の仮値
+    medals: { bronze: 550, silver: 950, gold: 1350 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    help: {
+      goal: 'サイコロを スワイプで ころがして、色つきの目標マスに「書いてある目」を 上にして のせよう。ころがすたび 上の目が かわるのがポイント。ぜんぶ スタンプしたら クリア！全5面。',
+      controls: [
+        'スワイプ（上下左右）：その向きに サイコロが 1マス ころがる',
+        '目標マスに 指定の目で のると スタンプ（色がつく）',
+        'かべ（茶色）や 盤の外には ころがせない',
+      ],
+      tips: [
+        'ころがすと 上の目が どう変わるか 先読みしよう',
+        'わざと 遠回りして 目を合わせるのがコツ',
+        '少ない手数で クリアすると 高得点！',
+      ],
+    },
+    achievements: [
+      { id: 'first-stamp', name: 'はじめてのスタンプ', desc: '目標マスを ひとつ スタンプした' },
+      { id: 'first-clear', name: '1めんクリア', desc: 'さいしょの面を クリアした' },
+      { id: 'clear-3', name: '3めんとっぱ', desc: '3面 クリアした' },
+      { id: 'all-clear', name: 'ぜんめんクリア', desc: '全5面を クリアした' },
+      { id: 'efficient', name: 'むだなしロール', desc: '目標手数いないで 1面クリアした', secret: true },
+      { id: 'score-hi', name: 'ダイスマスター', desc: '950点いじょうとった', secret: true },
+    ],
+    icon: { emoji: '🎲', svg: ICON_DICE },
+    addedIn: '0.99.0',
+    load: () => import('./dice-roll/game'),
+  },
+  {
+    id: 'laser-mirror',
+    no: 98,
+    title: 'はんしゃレーザー',
+    kana: 'はんしゃれーざー',
+    description: '鏡をタップで回して レーザーの向きを変え、ぜんぶの宝石に 光を通そう！爆弾に当てたら ダメ。多段反射を 先読みする 高難度パズル。全5面。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 面クリア＋最少手数ボーナス。高難度・実機playtest前提の仮値
+    medals: { bronze: 500, silver: 900, gold: 1300 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    help: {
+      goal: '発射口から出る レーザーを、鏡（/ か \\）で反射させて、ぜんぶの宝石（ダイヤ）に 通そう。鏡をタップすると 向きが 90°かわる。✕（爆弾）に 当てないように！ぜんぶ光ったら クリア。全5面。',
+      controls: [
+        'タップ：鏡を 90°まわす（/ ↔ \\）',
+        'レーザーが 宝石を ぜんぶ通れば クリア',
+        '✕（爆弾）に 当たると 光が止まる＝クリアにならない',
+      ],
+      tips: [
+        '発射口から 順に 光の道を たどって考えよう',
+        '1枚だけ回して 変化を見るのがコツ',
+        '少ないタップで クリアすると 高得点！',
+      ],
+    },
+    achievements: [
+      { id: 'first-gem', name: 'はじめての宝石', desc: 'レーザーを 宝石に通した' },
+      { id: 'first-clear', name: '1めんクリア', desc: 'さいしょの面を クリアした' },
+      { id: 'clear-3', name: '3めんとっぱ', desc: '3面 クリアした' },
+      { id: 'all-clear', name: 'ぜんめんクリア', desc: '全5面を クリアした' },
+      { id: 'efficient', name: 'むだのない反射', desc: 'さいしょう手数で 1面クリアした', secret: true },
+      { id: 'score-hi', name: 'レーザーマスター', desc: '900点いじょうとった', secret: true },
+    ],
+    icon: { emoji: '🔦', svg: ICON_LASER },
+    addedIn: '0.99.0',
+    load: () => import('./laser-mirror/game'),
+  },
+  {
+    id: 'mirror-twins',
+    no: 99,
+    title: 'かがみワールド',
+    kana: 'かがみわーるど',
+    description: 'スワイプで本体を動かすと、鏡の分身が 左右反対に動く！2人を同時に それぞれのゴールへ。かべで片方だけ止まると ズレるのがミソ。トゲはさけて。頭をひねる 高難度パズル。全5面。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 面クリア＋最少手数ボーナス。高難度・実機playtest前提の仮値
+    medals: { bronze: 500, silver: 900, gold: 1300 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    help: {
+      goal: '青い本体を スワイプで動かすと、ピンクの分身が「左右だけ反対」に動く（上下は同じ）。2人を 同時に それぞれの色のゴールへ入れたら クリア！トゲを踏むと ステージの最初から。全5面。',
+      controls: [
+        'スワイプ（上下左右）：本体が動く／分身は 左右反対に動く',
+        'かべに当たった側だけ 止まる＝2人がズレる（これを利用する）',
+        'どちらかが トゲを踏むと やり直し',
+      ],
+      tips: [
+        'かべを使って わざとズレを作るのがコツ',
+        'まず 片方を ゴールに合わせてから、もう片方を調整',
+        '少ない手数で クリアすると 高得点！',
+      ],
+    },
+    achievements: [
+      { id: 'first-clear', name: '1めんクリア', desc: 'さいしょの面を クリアした' },
+      { id: 'clear-3', name: '3めんとっぱ', desc: '3面 クリアした' },
+      { id: 'all-clear', name: 'ぜんめんクリア', desc: '全5面を クリアした' },
+      { id: 'efficient', name: 'むだのない動き', desc: '目標手数いないで 1面クリアした', secret: true },
+      { id: 'no-reset', name: 'ノーミス', desc: 'トゲを踏まずに 1面クリアした', secret: true },
+      { id: 'score-hi', name: 'かがみマスター', desc: '900点いじょうとった', secret: true },
+    ],
+    icon: { emoji: '🪞', svg: ICON_MIRRORTWINS },
+    addedIn: '0.99.0',
+    load: () => import('./mirror-twins/game'),
   },
 ];
 

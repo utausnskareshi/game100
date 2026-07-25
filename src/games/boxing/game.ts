@@ -306,6 +306,23 @@ export function createGame(ctx: GameContext): IGame {
     g.closePath();
   }
 
+  // よける向きの文字ガイド（分かりやすさ改善: どっちにスワイプするかを明示）
+  function drawDodgeHint(dir: DodgeDir, now: number): void {
+    const pulse = 0.55 + 0.45 * Math.sin(now / 110);
+    const label = dir === 'left' ? '← ひだりへ よける' : dir === 'right' ? 'みぎへ よける →' : '▼ しゃがむ（下スワイプ）';
+    g.save();
+    g.globalAlpha = pulse;
+    g.font = 'bold 17px sans-serif';
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.strokeStyle = 'rgba(10,8,22,.8)';
+    g.lineWidth = 4;
+    g.strokeText(label, 180, 452);
+    g.fillStyle = '#8fd0ff';
+    g.fillText(label, 180, 452);
+    g.restore();
+  }
+
   function draw(now: number): void {
     // よけ中のカメラずれ（プレイヤー視点）
     let camX = 0;
@@ -443,6 +460,37 @@ export function createGame(ctx: GameContext): IGame {
     }
 
     g.restore();
+
+    // ---- タイミング/操作の合図（分かりやすさ改善） ----
+    // 予備動作中: 「あと何秒で来るか」を閉じるリングで見せ、よける向きを文字で明示。
+    if (phase === 'tele' && !(curFeint && now >= feintCancelAt)) {
+      const tp = Math.min(1, (now - phaseAt) / Math.max(1, teleUntil - phaseAt));
+      g.strokeStyle = `rgba(255,213,74,${(0.3 + 0.55 * tp).toFixed(2)})`;
+      g.lineWidth = 4 + 2 * tp;
+      g.beginPath();
+      g.arc(180, OPP.y - 2, 98 - 64 * tp, 0, Math.PI * 2); // 閉じきる＝着弾の瞬間
+      g.stroke();
+      drawDodgeHint(correctDodge(curType), now);
+    }
+    // すき（カウンター受付中）: 閉じるリング＋「タップ！」。前半はジャスト＝金色。
+    if (phase === 'open' && !counterUsed) {
+      const win = Math.max(1, cfg().windowMs);
+      const op = Math.min(1, (now - openStart) / win);
+      const isJust = now <= openStart + win * JUST_FRAC;
+      g.strokeStyle = isJust ? 'rgba(255,213,74,.95)' : 'rgba(141,255,192,.95)';
+      g.lineWidth = 5;
+      g.beginPath();
+      g.arc(180, OPP.y - 2, 68 - 42 * op, 0, Math.PI * 2);
+      g.stroke();
+      g.fillStyle = isJust ? '#ffd54a' : '#8affc0';
+      g.font = 'bold 22px sans-serif';
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.strokeStyle = 'rgba(10,8,22,.7)';
+      g.lineWidth = 4;
+      g.strokeText(isJust ? 'タップ！(ジャスト)' : 'タップ！', 180, OPP.y - 2);
+      g.fillText(isJust ? 'タップ！(ジャスト)' : 'タップ！', 180, OPP.y - 2);
+    }
 
     // ---- プレイヤーのグローブ（POV・画面下） ----
     const punchUp = now <= playerPunchUntil ? (1 - (playerPunchUntil - now) / 160) * 120 : 0;

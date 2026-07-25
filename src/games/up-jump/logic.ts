@@ -30,15 +30,20 @@ export function gapFor(climbedPx: number, rng: () => number): number {
   const diff = Math.min(1, climbedPx / 6000); // 0→1
   const min = 62 + diff * 24; // 62→86
   const max = 96 + diff * 34; // 96→130（< MAX_REACH 136）
-  return min + rng() * (max - min);
+  // 6000px より上（＝金メダル450m・全実績500m を越えたあと）も、ほんの少しだけ広がり続ける。
+  // MAX_REACH 136 は超えないので「届かない足場」にはならない（到達可能性は維持）。
+  const ex = Math.min(4, Math.max(0, climbedPx - 6000) / 3000); // 0→4px
+  return min + rng() * (max + ex - min); // rng の消費回数は従来と同じ1回
 }
 
 /** 足場のタイプ（のぼるほど moving/spring が増える。spring はごくたまに） */
 export function typeFor(climbedPx: number, rng: () => number): PlatType {
   const diff = Math.min(1, climbedPx / 6000);
-  const r = rng();
+  // 6000px より上（全実績・金メダルの圏外）でだけ、動く足場の比率をさらに上げる（40%→70%）。
+  const ex = Math.min(1, Math.max(0, climbedPx - 6000) / 9000);
+  const r = rng(); // 消費回数は従来と同じ1回
   if (r < 0.08 + diff * 0.04) return 'spring'; // 8%→12%
-  if (r < 0.08 + diff * 0.04 + 0.15 + diff * 0.25) return 'moving'; // 15%→40%
+  if (r < 0.08 + diff * 0.04 + 0.15 + diff * 0.25 + ex * 0.3) return 'moving'; // 15%→40%→70%
   return 'normal';
 }
 
@@ -47,7 +52,9 @@ export function nextPlatform(prevY: number, climbedPx: number, rng: () => number
   const y = prevY - gapFor(climbedPx, rng);
   const type = typeFor(climbedPx, rng);
   const x = rng() * (W - PLAT_W);
-  const vx = type === 'moving' ? (rng() < 0.5 ? -1 : 1) * (60 + rng() * 60) : 0;
+  // 動く足場の速さも 6000px より上でだけ上がる（60〜120 → 最大150〜210px/s）。rng消費は従来と同じ。
+  const exSpd = Math.min(90, Math.max(0, climbedPx - 6000) * 0.01);
+  const vx = type === 'moving' ? (rng() < 0.5 ? -1 : 1) * (60 + rng() * 60 + exSpd) : 0;
   return { x, y, type, vx, used: false };
 }
 

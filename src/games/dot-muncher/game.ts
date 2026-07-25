@@ -106,7 +106,8 @@ export function createGame(ctx: GameContext): IGame {
         eaten: false,
         color: GHOST_COLORS[i] ?? '#fff',
         kind: kinds[i] ?? 'random',
-        releaseDelay: 1500 + i * 2200, // 1匹目1.5秒→以後2.2秒おきに巣から出る
+        // 巣から出るまでの時間差スタート。ステージ1は入門ゆえ長め（最初の1匹2.6秒→以後2.8秒おき）。
+        releaseDelay: (stage === 1 ? 2600 : 1500) + i * (stage === 1 ? 2800 : 2200),
       });
     }
     frightenedUntil = 0;
@@ -156,14 +157,18 @@ export function createGame(ctx: GameContext): IGame {
   });
 
   // 十字ボタンの中心と当たり判定
-  const DPAD = { x: W / 2, y: 520, arm: 46, half: 26 };
+  const DPAD = { x: W / 2, y: 520, arm: 54, half: 30 };
+  // 押し損ね防止: 下部の広い正方形エリア内なら、中央デッドゾーンを除き
+  // 「大きく離れた軸＝近い向き」を拾う（各アームのせまい枠に正確に当てなくてよい）。
   function dpadDirAt(x: number, y: number): Dir | null {
     const { x: cx, y: cy, arm, half } = DPAD;
-    if (Math.abs(x - cx) <= half && y >= cy - arm - half && y < cy - half + 6) return 0; // up
-    if (Math.abs(x - cx) <= half && y > cy + half - 6 && y <= cy + arm + half) return 2; // down
-    if (Math.abs(y - cy) <= half && x >= cx - arm - half && x < cx - half + 6) return 3; // left
-    if (Math.abs(y - cy) <= half && x > cx + half - 6 && x <= cx + arm + half) return 1; // right
-    return null;
+    const dx = x - cx;
+    const dy = y - cy;
+    const reach = arm + half + 14; // ≈ ±98px の操作エリア（迷路やポーズボタンには重ならない）
+    if (Math.abs(dx) > reach || Math.abs(dy) > reach) return null;
+    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return null; // 中央デッドゾーン
+    if (Math.abs(dx) >= Math.abs(dy)) return dx > 0 ? 1 : 3; // 右 / 左
+    return dy > 0 ? 2 : 0; // 下 / 上
   }
 
   // ---- 更新 ----
@@ -238,8 +243,10 @@ export function createGame(ctx: GameContext): IGame {
     if (!ghostActive(gh, now)) return; // 巣で待機中は動かない
     if (gh.eaten) return; // 食べられた（目だけ）は巣で待機＝フィーバー明けに復活
     const frightened = ctx.now() < frightenedUntil && !gh.eaten;
-    let spd = 4.0 * (1 + (stage - 1) * 0.06);
-    if (frightened) spd = 2.8;
+    // ステージ1は入門ステージ＝おばけを ゆっくりに（プレイヤー4.8に対し3.2＝しっかり逃げ切れる）。
+    // ステージ2以降は従来どおり（4.0から少しずつ速く）。
+    let spd = stage === 1 ? 3.2 : 4.0 * (1 + (stage - 1) * 0.06);
+    if (frightened) spd = Math.min(spd, 2.8);
     gh.progress += spd * dt;
     if (gh.progress >= 1) {
       gh.progress -= 1;

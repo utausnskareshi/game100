@@ -234,7 +234,10 @@ const CSS = `
   user-select:none;-webkit-user-select:none}
 .cl-hud{display:flex;justify-content:center;align-items:center;gap:12px;padding:8px 64px 4px;flex-wrap:wrap;min-height:54px}
 .cl-hud-item{font-size:13.5px;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
-.cl-grid{width:min(94vw,420px);aspect-ratio:1;margin-top:2px;background:var(--bg-elev);border-radius:12px;padding:6px;
+/* 10×10 のマスを指で押しやすくするため、大きい画面では盤も大きくする（上限420→560px）。
+   iPad(744px幅〜)ではセルが約40px→約54pxになり44px基準を満たす。
+   スマホ幅では 94vw 側が効くので見た目は不変。58vh の項は縦に収まらない画面での保険。 */
+.cl-grid{width:min(94vw,560px,58vh);aspect-ratio:1;margin-top:2px;background:var(--bg-elev);border-radius:12px;padding:6px;
   box-sizing:border-box;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);gap:1px}
 .cl-cell{border:none;margin:0;padding:0;border-radius:4px;font-family:inherit;font-size:13px;font-weight:800;line-height:1;
   background:var(--bg-elev2);color:var(--text-dim)}
