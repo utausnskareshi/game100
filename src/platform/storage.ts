@@ -34,6 +34,8 @@ export interface AppDoc {
     totalPlays: number;
     totalTimeMs: number;
     exportedAt?: string;
+    /** かくれゲームを解放した日時（ISO）。一度解放したら戻らない目印 */
+    bonusUnlockedAt?: string;
   };
   games: Record<string, GameRecord>;
   /** 実績キー（`${gameId}/${achId}` または `global/${id}`）→ 解除日時 */
@@ -187,6 +189,7 @@ function migrate(raw: unknown): AppDoc {
   };
   if (typeof d.savedAt === 'string') merged.savedAt = d.savedAt;
   if (typeof p.exportedAt === 'string') merged.profile.exportedAt = p.exportedAt;
+  if (typeof p.bonusUnlockedAt === 'string') merged.profile.bonusUnlockedAt = p.bonusUnlockedAt;
   if (d.games && typeof d.games === 'object') {
     for (const [id, r] of Object.entries(d.games as Record<string, Partial<GameRecord> | null>)) {
       if (!r || typeof r !== 'object') continue;

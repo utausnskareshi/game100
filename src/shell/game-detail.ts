@@ -7,6 +7,8 @@ import {
   formatScore,
   isFavorite,
   isUnlocked,
+  medalGapText,
+  nextMedalGap,
   toggleFavorite,
 } from '../platform/progress';
 import { getDoc } from '../platform/storage';
@@ -59,6 +61,20 @@ export function openGameDetail(meta: GameMeta, opts?: { onChange?: () => void })
           el('strong', { text: rec?.best != null ? formatScore(meta.scoring, rec.best) : '—' }),
         ),
       );
+      // 次のメダルまで「あと どれくらい」（目標値だけでは、あと少しなのかが分からないため）
+      const gap = nextMedalGap(meta);
+      if (gap) {
+        const fill = el('i');
+        fill.style.width = `${Math.round(gap.ratio * 100)}%`;
+        stats.appendChild(
+          el(
+            'div',
+            { class: 'medal-gap' },
+            el('span', { class: 'medal-gap-bar' }, fill),
+            el('span', { class: 'medal-gap-text', text: medalGapText(meta, gap) }),
+          ),
+        );
+      }
     }
     stats.appendChild(
       el(
@@ -87,6 +103,41 @@ export function openGameDetail(meta: GameMeta, opts?: { onChange?: () => void })
       stats.appendChild(medalLine);
     }
     box.appendChild(stats);
+
+    // さいきんのスコア（記録は前から保存されていたので、これまでのプレイ分もそのまま出る）
+    const hist = rec?.history ?? [];
+    const scores = meta.scoring === 'none' ? [] : hist.map((h) => h.score).filter((s) => Number.isFinite(s));
+    // 2回以上の「有効なスコア」がそろってから出す（1件だけだと比べる意味がない）
+    if (scores.length >= 2) {
+      const older = scores.slice().reverse(); // 古い順に左から並べる
+      const max = Math.max(...scores);
+      const min = Math.min(...scores);
+      const span = max - min;
+      const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+      const bestScore = meta.scoring === 'timeMs' ? min : max;
+      const bars = el('div', { class: 'hist-bars' });
+      for (const s of older) {
+        // 「良いスコアほど高い棒」にする（タイム型は短いほど良いので反転）
+        const good = span === 0 ? 1 : meta.scoring === 'timeMs' ? (max - s) / span : (s - min) / span;
+        const b = el('i', { class: s === bestScore ? 'is-best' : '' });
+        b.style.height = `${Math.round(18 + good * 82)}%`;
+        b.title = formatScore(meta.scoring, s);
+        bars.appendChild(b);
+      }
+      box.appendChild(
+        el(
+          'div',
+          { class: 'hist card' },
+          el(
+            'div',
+            { class: 'hist-head' },
+            el('span', { text: `さいきんの ${scores.length} かい` }),
+            el('span', { class: 'hist-avg', text: `へいきん ${formatScore(meta.scoring, Math.round(avg))}` }),
+          ),
+          bars,
+        ),
+      );
+    }
 
     // 実績
     if (meta.achievements.length > 0) {

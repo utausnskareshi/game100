@@ -27,8 +27,9 @@ git push -u origin github-main:main
 ```
 
 > 💡 これで GitHub には「1コミットだけ・作者はあなた（`utausnskareshi`）だけ」の
-> きれいな状態で公開されます（メールは非公開用 `utausnskareshi@users.noreply.github.com`・
-> 個人のメールアドレスは公開されません）。手元の開発履歴（`main` ブランチ）は消えず別で残ります。
+> きれいな状態で公開されます（コミットのメールは GitHub の非公開用アドレスを使う設定に
+> してあるので、個人のメールアドレスは公開されません）。手元の開発履歴（`main` ブランチ）は
+> 消えず別で残ります。
 > **以降このリポジトリでは、公開用の `github-main` ブランチで作業して `git push` します。**
 > さらに確実にするなら、GitHub の Settings → Emails で
 > 「Keep my email addresses private」と「Block command line pushes that expose my email」を

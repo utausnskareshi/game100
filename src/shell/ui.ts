@@ -1,17 +1,28 @@
 // 共通UI部品: トースト・確認ダイアログ・ボトムシート・ゲームアイコン・トグル
 import type { GameMeta } from '../game-api/types';
 import { el } from '../platform/dom';
+import { bonusUnlocked } from '../games/index';
 import { pushGuard, type GuardHandle } from '../platform/backstack';
 import { hashString } from '../platform/rng';
+import { getDoc } from '../platform/storage';
 import { t } from './strings';
 
 /**
- * NEW バッジ・新着の判定。バージョン方式は「真ん中の数字＝収録ゲーム数」なので、
- * major.minor が一致すれば同じ収録世代（＝最新の追加分）とみなす。
- * addedIn との完全一致にすると、ゲーム追加を伴わないパッチ（0.5.0→0.5.1）で
- * NEW 表示が全部消えてしまうため、パッチ部分は比較しない。
+ * NEW バッジ・新着の判定。
+ *
+ * 本編のゲーム: バージョン方式は「真ん中の数字＝収録ゲーム数」なので、major.minor が
+ * 一致すれば同じ収録世代（＝最新の追加分）とみなす。addedIn との完全一致にすると、
+ * ゲーム追加を伴わないパッチ（0.5.0→0.5.1）で NEW が全部消えてしまうため
+ * パッチ部分は比較しない。**かくれゲームを解放したら、本編の NEW は役目を終えるので消す**。
+ *
+ * かくれゲーム: 解放されてから「まだあそんでいないもの」だけ NEW（あそべば自動で消える）。
+ * ＝ NEW の意味が「このバージョンの新着」から「あなたにとっての新着」に変わる箇所。
  */
 export function isNewGame(meta: GameMeta): boolean {
+  if (meta.hidden) {
+    return bonusUnlocked() && (getDoc().games[meta.id]?.plays ?? 0) === 0;
+  }
+  if (bonusUnlocked()) return false;
   const cur = __APP_VERSION__.split('.');
   const added = meta.addedIn.split('.');
   return added[0] === cur[0] && added[1] === cur[1];

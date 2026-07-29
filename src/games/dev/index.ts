@@ -1,11 +1,12 @@
 // 検証用ゲーム一覧（開発ビルドのみ読み込まれる。src/games/index.ts 参照）
 // 本番リリース前の枠組み検証のためのもので、dist には含まれない。
+// no は 901〜（本番 1〜100・かくれゲーム 101〜130 とぶつからない番号。どちらの台紙にも出ない）。
 import type { GameMeta } from '../../game-api/types';
 
 export const devGames: GameMeta[] = [
   {
     id: 'dev-tap',
-    no: 98,
+    no: 901,
     title: 'タップテスト',
     kana: 'たっぷてすと',
     description: 'ふくらむシャボンを消えるまえにタップ！（枠組み検証用・開発ビルド限定）',
@@ -29,7 +30,7 @@ export const devGames: GameMeta[] = [
   },
   {
     id: 'dev-tilt',
-    no: 99,
+    no: 902,
     title: 'かたむきテスト',
     kana: 'かたむきてすと',
     description: '端末をかたむけてボールをゴールへ運ぶタイムアタック！（枠組み検証用・開発ビルド限定）',
@@ -54,7 +55,7 @@ export const devGames: GameMeta[] = [
   },
   {
     id: 'dev-quiz',
-    no: 100,
+    no: 903,
     title: 'けいさんテスト',
     kana: 'けいさんてすと',
     description: '10問の計算をすばやく解こう。はやく答えるとボーナス！（枠組み検証用・開発ビルド限定）',

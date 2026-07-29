@@ -45,7 +45,7 @@ export function createGame(ctx: GameContext): IGame {
 | フィールド | 説明 |
 | --- | --- |
 | `id` | 不変ID。フォルダ名と同じにする |
-| `no` | 1〜100 の空いている次の番号。**後から変えない**（スタンプ台紙の位置） |
+| `no` | 1〜100 の空いている次の番号。**後から変えない**（スタンプ台紙の位置）。※2026-07-25 に 1〜100 をすべて使い切った（検証用ゲームは 101〜。スタンプ台紙は 1〜100 なので 101 以降は台紙に出ない） |
 | `title` / `kana` | 表示名と**ひらがな読み**（かな検索に必須） |
 | `category` | action / puzzle / reflex / memory / timing / sensor / chill |
 | `orientation` | portrait / landscape / any。固定するとAndroidはロック、iPhoneは回転案内 |

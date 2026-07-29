@@ -3,7 +3,7 @@ import { el, clear } from '../platform/dom';
 import { syncBackstack } from '../platform/backstack';
 import { currentRoute, initRouter, navigate, type Route, type TabName } from '../platform/router';
 import { mountGameHost, type GameHostHandle } from '../platform/game-host';
-import { gameById } from '../games/index';
+import { gameById, isPlayable } from '../games/index';
 import { applyUpdate, updateAvailable } from '../platform/pwa';
 import { renderHome } from './home';
 import { renderGames } from './games';
@@ -86,7 +86,8 @@ export function startApp(root: HTMLElement): void {
   const renderRoute = (r: Route): void => {
     if (r.name === 'play') {
       const meta = gameById(r.gameId);
-      if (!meta || meta.status === 'retired') {
+      // かくれゲームは解放前だと isPlayable が false（URLを直接たたかれても中身を見せない）
+      if (!meta || !isPlayable(meta)) {
         navigate('#/home', { replace: true });
         return;
       }

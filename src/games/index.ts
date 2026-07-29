@@ -10,6 +10,7 @@
 //   - 公開をやめるときは削除せず status: 'retired' にする
 // =============================================================
 import type { GameMeta } from '../game-api/types';
+import { getDoc } from '../platform/storage';
 
 // ゲームアイコン（端末非依存の自作SVG。絵文字は iOS/Android/iPad で見た目が変わるため、
 // 意匠が重要なものは SVG で固定する。ID 由来のグラデ背景の代わりに svg 内で背景も描く）
@@ -73,6 +74,100 @@ const ICON_LASER =
   "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#0d1226'/><path d='M9 30 H50 V64 H80' fill='none' stroke='#7ee6ff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/><g stroke='#cfe0ff' stroke-width='4' stroke-linecap='round'><line x1='43' y1='37' x2='57' y2='23'/><line x1='43' y1='57' x2='57' y2='71'/></g><path d='M80 54 l9 10 -9 10 -9 -10 z' fill='#ffd54a'/><circle cx='9' cy='30' r='4' fill='#7ee6ff'/><circle cx='28' cy='80' r='6' fill='#20242e' stroke='#ff5a5a' stroke-width='2'/></svg>";
 const ICON_MIRRORTWINS =
   "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#171a2e'/><line x1='50' y1='14' x2='50' y2='86' stroke='rgba(180,200,255,.35)' stroke-width='2' stroke-dasharray='5 5'/><circle cx='30' cy='30' r='9' fill='none' stroke='#5aa0ff' stroke-width='3'/><circle cx='70' cy='30' r='9' fill='none' stroke='#ff7ab0' stroke-width='3'/><circle cx='30' cy='60' r='12' fill='#5aa0ff'/><circle cx='26' cy='57' r='2.6' fill='#12244a'/><circle cx='34' cy='57' r='2.6' fill='#12244a'/><circle cx='70' cy='60' r='12' fill='#ff7ab0'/><circle cx='74' cy='57' r='2.6' fill='#5a1e3a'/><circle cx='66' cy='57' r='2.6' fill='#5a1e3a'/></svg>";
+// 100本目の記念アイコン: 10×10＝100マスのへび状の道・左上がゴール旗・左下が駒
+const ICON_HUNDRED =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#f3ead6'/><g stroke='rgba(122,100,66,.18)' stroke-width='1'><path d='M10 10H90M10 18H90M10 26H90M10 34H90M10 42H90M10 50H90M10 58H90M10 66H90M10 74H90M10 82H90M10 90H90M10 10V90M18 10V90M26 10V90M34 10V90M42 10V90M50 10V90M58 10V90M66 10V90M74 10V90M82 10V90M90 10V90'/></g><path d='M14 86H86V78H14V70H86V62H14V54H86V46H14V38H86V30H14V22H86V14H14' fill='none' stroke='rgba(122,100,66,.32)' stroke-width='5' stroke-linejoin='round' stroke-linecap='round'/><rect x='10' y='10' width='8' height='8' rx='1.5' fill='#2e8f4f'/><g stroke='#fff' stroke-width='1.3' stroke-linecap='round'><path d='M12.8 12.2V16.4'/></g><path d='M12.8 12.2l3.6 1.2-3.6 1.2z' fill='#fff'/><path d='M54 40.5l1.4 3.6 3.8 .2-2.9 2.4 .9 3.7-3.2-2-3.2 2 .9-3.7-2.9-2.4 3.8-.2z' fill='#f0b400'/><g stroke='#7b5ad0' stroke-width='2' fill='none'><circle cx='30' cy='62' r='4.4'/><path d='M30 55.6a6.4 6.4 0 016.4 6.4' stroke-linecap='round'/></g><circle cx='14' cy='86' r='5.2' fill='#3d7df0' stroke='#fff' stroke-width='1.6'/></svg>";
+
+// かくれゲーム（No.101〜）のアイコン
+const ICON_WORDBUILD =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#f3ead6'/><g font-family='sans-serif' font-size='26' font-weight='bold' fill='#4a3a1e' text-anchor='middle'><g transform='rotate(-9 30 40)'><rect x='14' y='24' width='32' height='32' rx='7' fill='#fffdf5' stroke='#c2ac80' stroke-width='2.5'/><text x='30' y='49'>ご</text></g><g transform='rotate(7 66 36)'><rect x='50' y='20' width='32' height='32' rx='7' fill='#fffdf5' stroke='#c2ac80' stroke-width='2.5'/><text x='66' y='45'>り</text></g><g transform='rotate(-3 48 74)'><rect x='32' y='58' width='32' height='32' rx='7' fill='#fffdf5' stroke='#c2ac80' stroke-width='2.5'/><text x='48' y='83'>ん</text></g></g></svg>";
+
+const ICON_CUPHIDE =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#20304a'/><circle cx='50' cy='74' r='9' fill='#ffd54a'/><circle cx='47' cy='71' r='3' fill='rgba(255,255,255,.6)'/><g><path d='M20 34 h14 l6 30 h-26 z' fill='#e0483c'/><rect x='14' y='58' width='26' height='6' rx='2' fill='#a8332a'/></g><g><path d='M60 26 h16 l7 34 h-30 z' fill='#e0483c'/><rect x='53' y='54' width='30' height='7' rx='2' fill='#a8332a'/></g><g stroke='#9fb0d0' stroke-width='2.5' fill='none' stroke-linecap='round'><path d='M30 22 q12 -10 24 0' stroke-dasharray='4 4'/><path d='M52 20 l4 -3 -1 5' /></g></svg>";
+
+const ICON_COLORMIX =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#f7f4ee'/><circle cx='38' cy='40' r='22' fill='#e63c3c' fill-opacity='.85'/><circle cx='62' cy='40' r='22' fill='#3c6ee6' fill-opacity='.75'/><circle cx='50' cy='62' r='22' fill='#f5cd3c' fill-opacity='.75'/><g stroke='#2f3140' stroke-width='2.5' fill='none' opacity='.5'><circle cx='38' cy='40' r='22'/><circle cx='62' cy='40' r='22'/><circle cx='50' cy='62' r='22'/></g></svg>";
+
+const ICON_BODYCLOCK =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#101a2e'/><circle cx='50' cy='50' r='30' fill='none' stroke='#4ad0e0' stroke-width='4'/><circle cx='50' cy='50' r='30' fill='rgba(74,208,224,.12)'/><g stroke='#eef3ff' stroke-width='4' stroke-linecap='round'><line x1='50' y1='50' x2='50' y2='30'/></g><circle cx='50' cy='50' r='4' fill='#eef3ff'/><g fill='#8fa0c4'><circle cx='50' cy='16' r='2.5'/><circle cx='84' cy='50' r='2.5'/><circle cx='50' cy='84' r='2.5'/><circle cx='16' cy='50' r='2.5'/></g><g fill='none' stroke='#ff9a7a' stroke-width='3' stroke-linecap='round'><path d='M70 74 l10 10'/><path d='M74 84 l10 -10'/></g></svg>";
+
+const ICON_CARRYWATER =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#eaf4fb'/><rect x='0' y='78' width='100' height='10' fill='#cfe6f4'/><g transform='rotate(-11 50 52)'><path d='M32 26 h36 l-5 52 h-26 z' fill='rgba(255,255,255,.9)' stroke='#7fa6bd' stroke-width='3'/><path d='M33 40 h34 l-4 38 h-26 z' fill='#3aa6e0'/><path d='M33 40 h34' stroke='#2b83b5' stroke-width='3'/></g><g fill='#3aa6e0'><circle cx='74' cy='34' r='4'/><circle cx='82' cy='46' r='3'/></g><path d='M12 60 q6 -8 12 0' stroke='#7fa6bd' stroke-width='3' fill='none' stroke-linecap='round'/></svg>";
+
+const ICON_FINALDOOR =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#120e1a'/><rect x='26' y='18' width='48' height='68' rx='8' fill='#241c33' stroke='#ffd54a' stroke-width='3'/><rect x='34' y='26' width='32' height='52' rx='5' fill='#fff8dc'/><circle cx='64' cy='52' r='3.5' fill='#ffd54a'/><g stroke='#ffd54a' stroke-width='2.5' stroke-linecap='round' opacity='.9'><path d='M50 8 v6'/><path d='M20 16 l4 4'/><path d='M80 16 l-4 4'/><path d='M12 46 h6'/><path d='M82 46 h6'/></g><g fill='#ffd54a'><path d='M50 34 l2.6 5.4 5.9 .9 -4.3 4.1 1 5.9 -5.2 -2.8 -5.2 2.8 1 -5.9 -4.3 -4.1 5.9 -.9 z'/></g></svg>";
+
+const ICON_TRAPCHASE =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#1a1420'/><g fill='#2a2033'><rect x='10' y='18' width='24' height='24' rx='5'/><rect x='38' y='18' width='24' height='24' rx='5'/><rect x='66' y='18' width='24' height='24' rx='5'/><rect x='10' y='46' width='24' height='24' rx='5'/><rect x='66' y='46' width='24' height='24' rx='5'/></g><rect x='38' y='46' width='24' height='24' rx='12' fill='#08050c' stroke='rgba(255,255,255,.14)' stroke-width='2'/><circle cx='22' cy='30' r='10' fill='#4ad0b0'/><g fill='#07231d'><circle cx='19' cy='28' r='2.4'/><circle cx='25' cy='28' r='2.4'/></g><circle cx='78' cy='58' r='10' fill='#e0607a'/><g fill='#3a0a16'><circle cx='75' cy='56' r='2.4'/><circle cx='81' cy='56' r='2.4'/></g><g stroke='#ffd54a' stroke-width='3' stroke-linecap='round' fill='none'><path d='M68 58 h-8'/><path d='M63 53 l-5 5 5 5'/></g></svg>";
+
+const ICON_ONELIE =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#1c1a16'/><g fill='#2b2721'><rect x='12' y='16' width='76' height='12' rx='4'/><rect x='12' y='32' width='76' height='12' rx='4'/><rect x='12' y='48' width='76' height='12' rx='4'/></g><rect x='12' y='32' width='76' height='12' rx='4' fill='rgba(224,72,60,.25)'/><g fill='#b3a893'><rect x='18' y='20' width='40' height='4' rx='2'/><rect x='18' y='52' width='52' height='4' rx='2'/></g><g fill='#e0483c'><rect x='18' y='36' width='46' height='4' rx='2'/></g><g fill='#2b2721' stroke='rgba(179,168,147,.4)' stroke-width='2'><rect x='14' y='68' width='22' height='20' rx='5'/><rect x='40' y='68' width='22' height='20' rx='5'/><rect x='66' y='68' width='22' height='20' rx='5'/></g><rect x='40' y='68' width='22' height='20' rx='5' fill='rgba(90,208,138,.25)' stroke='#5ad08a' stroke-width='2.5'/><path d='M51 72 l4 5 -4 5 -4 -5 z' fill='#ffd54a'/></svg>";
+
+const ICON_UNTANGLE =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#0f1a1c'/><rect x='12' y='16' width='76' height='68' rx='12' fill='#15262a'/><g stroke='#4f8f96' stroke-width='2.6'><path d='M28 30 L72 30'/><path d='M72 30 L72 70'/><path d='M72 70 L28 70'/><path d='M28 70 L28 30'/></g><g stroke='#e0704a' stroke-width='3'><path d='M28 30 L72 70'/><path d='M72 30 L28 70'/></g><g fill='#ffd54a' stroke='rgba(0,0,0,.35)' stroke-width='2'><circle cx='28' cy='30' r='8'/><circle cx='72' cy='30' r='8'/><circle cx='72' cy='70' r='8'/><circle cx='28' cy='70' r='8'/></g></svg>";
+
+const ICON_PULLGRAVITY =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#0d1424'/><rect x='10' y='14' width='80' height='72' rx='10' fill='#141d33'/><circle cx='50' cy='50' r='6' fill='#4ad0e0'/><g fill='none' stroke='#4ad0e0' stroke-width='2' opacity='.75'><circle cx='50' cy='50' r='14'/><circle cx='50' cy='50' r='22'/></g><g stroke='rgba(255,213,74,.4)' stroke-width='1.5'><path d='M24 26 L50 50'/><path d='M78 30 L50 50'/><path d='M30 74 L50 50'/></g><g fill='#ffd54a'><path d='M24 26 l2.4 5 5.4 .8 -4 3.8 .9 5.4 -4.7 -2.6 -4.7 2.6 .9 -5.4 -4 -3.8 5.4 -.8 z'/><path d='M78 30 l2.4 5 5.4 .8 -4 3.8 .9 5.4 -4.7 -2.6 -4.7 2.6 .9 -5.4 -4 -3.8 5.4 -.8 z'/></g><g fill='#e0483c'><circle cx='70' cy='68' r='7'/><circle cx='30' cy='60' r='7'/></g></svg>";
+
+const ICON_RULESTACK =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#1a1526'/><g fill='#9d92bd'><rect x='12' y='16' width='44' height='4' rx='2'/><rect x='12' y='26' width='54' height='4' rx='2'/><rect x='12' y='36' width='38' height='4' rx='2'/></g><rect x='12' y='46' width='60' height='4' rx='2' fill='#ffd54a'/><circle cx='38' cy='72' r='16' fill='#ff6b6b'/><circle cx='38' cy='72' r='21' fill='none' stroke='#f0ecff' stroke-width='3'/><rect x='66' y='60' width='22' height='22' rx='5' fill='#4aa3ff'/><rect x='62' y='56' width='30' height='30' rx='8' fill='none' stroke='#f0ecff' stroke-width='3' stroke-dasharray='6 5'/></svg>";
+
+const ICON_EDGETAKE =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#1d1a14'/><g font-family='sans-serif' font-weight='bold' text-anchor='middle'><rect x='8' y='38' width='22' height='26' rx='5' fill='#2c281e' stroke='#ffd54a' stroke-width='2.5'/><text x='19' y='57' font-size='15' fill='#f6f0e2'>7</text><rect x='32' y='40' width='16' height='22' rx='4' fill='#2c281e'/><text x='40' y='56' font-size='12' fill='#b4a98c'>2</text><rect x='50' y='40' width='16' height='22' rx='4' fill='#2c281e'/><text x='58' y='56' font-size='12' fill='#b4a98c'>9</text><rect x='70' y='38' width='22' height='26' rx='5' fill='#2c281e' stroke='#ffd54a' stroke-width='2.5'/><text x='81' y='57' font-size='15' fill='#f6f0e2'>4</text></g><g stroke-width='3' stroke-linecap='round' fill='none'><path d='M19 30 v-8' stroke='#4ac9a0'/><path d='M81 72 v8' stroke='#e08a5a'/></g><circle cx='19' cy='18' r='4' fill='#4ac9a0'/><circle cx='81' cy='84' r='4' fill='#e08a5a'/></svg>";
+
+const ICON_MANYME =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#12202a'/><g fill='#1e3340'><rect x='10' y='22' width='24' height='24' rx='5'/><rect x='38' y='22' width='24' height='24' rx='5'/><rect x='66' y='22' width='24' height='24' rx='5'/><rect x='10' y='50' width='24' height='24' rx='5'/><rect x='66' y='50' width='24' height='24' rx='5'/></g><rect x='38' y='50' width='24' height='24' rx='5' fill='#0a1218'/><g fill='#3a6b52'><rect x='66' y='22' width='24' height='24' rx='5'/><rect x='66' y='50' width='24' height='24' rx='5'/></g><g fill='#4ad0b0'><circle cx='22' cy='34' r='10'/><circle cx='22' cy='62' r='10'/></g><g fill='#07231d'><circle cx='19' cy='32' r='2.4'/><circle cx='25' cy='32' r='2.4'/><circle cx='19' cy='60' r='2.4'/><circle cx='25' cy='60' r='2.4'/></g><g stroke='#ffd54a' stroke-width='3' stroke-linecap='round' fill='none'><path d='M40 82 h18'/><path d='M52 77 l6 5 -6 5'/></g></svg>";
+
+const ICON_TWINWORLDS =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#0f1626'/><rect x='0' y='16' width='100' height='32' fill='#1b2a44'/><rect x='0' y='44' width='100' height='6' fill='#3b4d70'/><rect x='0' y='56' width='100' height='32' fill='#2a1b3d'/><rect x='0' y='84' width='100' height='6' fill='#3b4d70'/><circle cx='26' cy='30' r='9' fill='#4ad0e0'/><circle cx='26' cy='70' r='9' fill='#ffa0d0'/><path d='M60 44 l7 -14 l7 14 z' fill='#ff6b6b'/><rect x='52' y='56' width='11' height='20' fill='#ffc14a'/><g stroke='#eaf2ff' stroke-width='3' stroke-linecap='round' opacity='.85'><path d='M88 26 v-8'/><path d='M88 66 v-8'/></g></svg>";
+
+const ICON_CHAINBLAST =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#191225'/><g stroke='rgba(255,213,74,.6)' stroke-width='3' stroke-linecap='round'><path d='M30 30 h16 M30 30 v16'/><path d='M70 62 h-16 M70 62 v-16'/></g><circle cx='30' cy='30' r='9' fill='#4ac9e0'/><circle cx='62' cy='36' r='12' fill='#ffa63a'/><circle cx='38' cy='66' r='14' fill='#ff5f8a'/><circle cx='72' cy='72' r='9' fill='#4ac9e0'/><g fill='rgba(255,255,255,.55)'><circle cx='27' cy='27' r='3'/><circle cx='58' cy='32' r='4'/><circle cx='33' cy='61' r='4.5'/></g><g stroke='#ffd54a' stroke-width='2.5' stroke-linecap='round' opacity='.9'><path d='M50 18 v-8 M64 22 l5 -6 M36 22 l-5 -6'/></g></svg>";
+
+const ICON_RULENEXT =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#1b1f2e'/><g><rect x='8' y='34' width='20' height='24' rx='6' fill='#262c40'/><rect x='30' y='34' width='20' height='24' rx='6' fill='#262c40'/><rect x='52' y='34' width='20' height='24' rx='6' fill='#262c40'/><rect x='74' y='34' width='20' height='24' rx='6' fill='rgba(255,213,74,.16)'/></g><circle cx='18' cy='46' r='7' fill='#ff6b6b'/><rect x='34' y='39' width='13' height='13' rx='2' fill='#4aa3ff'/><circle cx='62' cy='46' r='7' fill='#ff6b6b'/><text x='84' y='53' font-family='sans-serif' font-size='18' font-weight='bold' fill='#ffd54a' text-anchor='middle'>?</text><g fill='#5ad08a'><rect x='30' y='70' width='13' height='13' rx='2'/></g><path d='M22 76 h4 M56 76 h20' stroke='#96a0bd' stroke-width='2' stroke-linecap='round'/></svg>";
+
+const ICON_WALLHOLE =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#151a2b'/><g fill='#3d4a72' stroke='#5b6ca8' stroke-width='1.5'><rect x='8' y='22' width='20' height='20' rx='4'/><rect x='30' y='22' width='20' height='20' rx='4'/><rect x='74' y='22' width='18' height='20' rx='4'/><rect x='8' y='44' width='20' height='20' rx='4'/><rect x='52' y='44' width='20' height='20' rx='4'/><rect x='74' y='44' width='18' height='20' rx='4'/></g><g fill='#4ad0a0'><rect x='32' y='70' width='18' height='18' rx='5'/><rect x='52' y='70' width='18' height='18' rx='5'/></g><g fill='#0d2a22'><circle cx='37' cy='79' r='2.4'/><circle cx='45' cy='79' r='2.4'/></g><path d='M62 60 l0 6 M58 64 l4 4 4 -4' stroke='#4ad0a0' stroke-width='2.5' fill='none' stroke-linecap='round'/></svg>";
+
+const ICON_THREEHANDS =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#141b2e'/><circle cx='50' cy='54' r='34' fill='#1e2740' stroke='rgba(139,151,189,.4)' stroke-width='2'/><path d='M50 21 l-8 -10 h16 z' fill='#ffd54a'/><g stroke-linecap='round' fill='none'><line x1='50' y1='54' x2='50' y2='26' stroke='#4ad0e0' stroke-width='5'/><line x1='50' y1='54' x2='70' y2='38' stroke='#ffb04a' stroke-width='4'/><line x1='50' y1='54' x2='36' y2='74' stroke='#ff7ab0' stroke-width='3.5'/></g><circle cx='50' cy='54' r='5' fill='#eaf0ff'/></svg>";
+
+const ICON_REVRECALL =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#101a24'/><g><rect x='12' y='30' width='24' height='24' rx='7' fill='#e05a5a'/><rect x='38' y='30' width='24' height='24' rx='7' fill='rgba(255,255,255,.10)' stroke='#e0a13a' stroke-width='2.5'/><rect x='64' y='30' width='24' height='24' rx='7' fill='rgba(255,255,255,.10)' stroke='#4ac96a' stroke-width='2.5'/><rect x='12' y='58' width='24' height='24' rx='7' fill='rgba(255,255,255,.10)' stroke='#3aa6e0' stroke-width='2.5'/><rect x='38' y='58' width='24' height='24' rx='7' fill='#9a6ae0'/><rect x='64' y='58' width='24' height='24' rx='7' fill='rgba(255,255,255,.10)' stroke='#e06aa8' stroke-width='2.5'/></g><g fill='none' stroke='#ffd54a' stroke-width='3.5' stroke-linecap='round'><path d='M76 20 h-46'/><path d='M38 13 l-9 7 9 7'/></g></svg>";
+
+const ICON_COLORSTAIRS =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#23202c'/><g><rect x='14' y='14' width='34' height='34' rx='6' fill='#e05a5a'/><rect x='52' y='14' width='34' height='34' rx='6' fill='#c98a3a'/><rect x='14' y='52' width='34' height='34' rx='6' fill='#7a5ae0'/><rect x='52' y='52' width='34' height='34' rx='6' fill='#3aa6c9'/></g><g fill='rgba(255,255,255,.9)'><circle cx='31' cy='31' r='4'/><circle cx='69' cy='31' r='4'/><circle cx='31' cy='69' r='4'/><circle cx='69' cy='69' r='4'/></g><rect x='52' y='14' width='34' height='34' rx='6' fill='none' stroke='#ffd54a' stroke-width='3'/></svg>";
+
+const ICON_SNOWROLL =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#cfe4f2'/><g fill='#ffffff'><rect x='10' y='58' width='18' height='18' rx='5'/><rect x='32' y='58' width='18' height='18' rx='5'/><rect x='10' y='36' width='18' height='18' rx='5'/></g><g fill='#b9cfdd'><rect x='36' y='40' width='10' height='10' rx='3'/><rect x='58' y='62' width='10' height='10' rx='3'/></g><circle cx='68' cy='66' r='20' fill='#fbfdff' stroke='#7ea3bb' stroke-width='2.5'/><circle cx='72' cy='34' r='13' fill='#fbfdff' stroke='#7ea3bb' stroke-width='2.5'/><circle cx='61' cy='60' r='4.5' fill='rgba(126,163,187,.35)'/><path d='M20 84 q24 -12 48 -4' stroke='#7ea3bb' stroke-width='2.5' fill='none' stroke-dasharray='5 5'/></svg>";
+
+const ICON_HOSEWATER =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#dff1fb'/><rect x='0' y='74' width='100' height='26' fill='#8fbf6a'/><path d='M18 66 q26 -46 62 6' stroke='#3aa6e0' stroke-width='6' fill='none' stroke-linecap='round' stroke-dasharray='2 9'/><g stroke='#4a5b64' stroke-width='7' stroke-linecap='round' fill='none'><path d='M12 82 L16 66 L28 56'/></g><g><line x1='76' y1='74' x2='76' y2='58' stroke='#2e8f4f' stroke-width='4'/><g fill='#ff7ab0'><circle cx='70' cy='53' r='6'/><circle cx='82' cy='53' r='6'/><circle cx='76' cy='46' r='6'/><circle cx='71' cy='60' r='6'/><circle cx='81' cy='60' r='6'/></g><circle cx='76' cy='54' r='4.5' fill='#ffd54a'/></g><circle cx='47' cy='34' r='4' fill='#3aa6e0' opacity='.7'/></svg>";
+
+const ICON_TILTSAFE =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#1a1710'/><rect x='12' y='16' width='76' height='68' rx='8' fill='#2d2718' stroke='#8a7233' stroke-width='3'/><circle cx='50' cy='50' r='26' fill='#1a1710' stroke='#8a7233' stroke-width='3'/><g stroke='#a89670' stroke-width='2.5' stroke-linecap='round'><line x1='50' y1='27' x2='50' y2='33'/><line x1='68' y1='38' x2='63' y2='41'/><line x1='68' y1='62' x2='63' y2='59'/><line x1='32' y1='38' x2='37' y2='41'/><line x1='32' y1='62' x2='37' y2='59'/></g><line x1='50' y1='50' x2='66' y2='36' stroke='#ffcf5a' stroke-width='5' stroke-linecap='round'/><circle cx='50' cy='50' r='6' fill='#ffcf5a'/><rect x='76' y='44' width='6' height='14' rx='3' fill='#8a7233'/></svg>";
+
+const ICON_PHASEODD =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#141024'/><g fill='#7d6bff'><circle cx='25' cy='25' r='9'/><circle cx='50' cy='25' r='9'/><circle cx='75' cy='25' r='9'/><circle cx='25' cy='50' r='9'/><circle cx='75' cy='50' r='9'/><circle cx='25' cy='75' r='9'/><circle cx='50' cy='75' r='9'/><circle cx='75' cy='75' r='9'/></g><circle cx='50' cy='50' r='4' fill='#ffd54a'/><circle cx='50' cy='50' r='14' fill='none' stroke='#ffd54a' stroke-width='2.5' stroke-dasharray='4 4'/></svg>";
+
+const ICON_RACEGUESS =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#0f1a1e'/><g stroke='#1b2b32' stroke-width='16' stroke-linecap='round'><line x1='32' y1='30' x2='32' y2='82'/><line x1='68' y1='30' x2='68' y2='82'/></g><g fill='#f0f4f5'><rect x='14' y='20' width='9' height='5'/><rect x='32' y='20' width='9' height='5'/><rect x='50' y='20' width='9' height='5'/><rect x='68' y='20' width='9' height='5'/><rect x='23' y='25' width='9' height='5'/><rect x='41' y='25' width='9' height='5'/><rect x='59' y='25' width='9' height='5'/><rect x='77' y='25' width='9' height='5'/></g><circle cx='32' cy='44' r='11' fill='#4ad0e0'/><circle cx='68' cy='66' r='11' fill='#ffb04a'/><g fill='#0d2126'><circle cx='28' cy='41' r='2'/><circle cx='36' cy='41' r='2'/><circle cx='64' cy='63' r='2'/><circle cx='72' cy='63' r='2'/></g></svg>";
+
+const ICON_PAPERFOLD =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#141b26'/><rect x='14' y='22' width='72' height='56' rx='5' fill='#f7f2e3'/><g stroke='#cbbf9e' stroke-width='1.6'><line x1='38' y1='22' x2='38' y2='78'/><line x1='62' y1='22' x2='62' y2='78'/><line x1='14' y1='50' x2='86' y2='50'/></g><path d='M62 22 L86 22 L86 78 L62 78 Z' fill='#e6dcc2' opacity='.9'/><line x1='62' y1='18' x2='62' y2='82' stroke='#ffd54a' stroke-width='3' stroke-dasharray='6 4'/><g fill='#f5a623'><path d='M26 36 l2.6 5.4 5.9 .8 -4.3 4.1 1 5.9 -5.2 -2.8 -5.2 2.8 1 -5.9 -4.3 -4.1 5.9 -.8 z'/><path d='M74 62 l2.6 5.4 5.9 .8 -4.3 4.1 1 5.9 -5.2 -2.8 -5.2 2.8 1 -5.9 -4.3 -4.1 5.9 -.8 z'/></g></svg>";
+
+const ICON_POLYRHYTHM =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#12131f'/><line x1='50' y1='18' x2='50' y2='82' stroke='rgba(255,255,255,.12)' stroke-width='2'/><circle cx='28' cy='50' r='17' fill='none' stroke='#4aa3ff' stroke-width='4'/><circle cx='28' cy='50' r='25' fill='none' stroke='#4aa3ff' stroke-width='2' opacity='.45'/><circle cx='72' cy='50' r='17' fill='none' stroke='#ff8a4a' stroke-width='4'/><circle cx='72' cy='50' r='27' fill='none' stroke='#ff8a4a' stroke-width='2' opacity='.35'/><g fill='#4aa3ff'><circle cx='20' cy='22' r='3'/><circle cx='30' cy='22' r='3'/><circle cx='40' cy='22' r='3'/></g><g fill='#ff8a4a'><circle cx='62' cy='22' r='3'/><circle cx='76' cy='22' r='3'/></g><g fill='#eef1ff'><circle cx='28' cy='50' r='5'/><circle cx='72' cy='50' r='5'/></g></svg>";
+
+const ICON_TIMESTOP =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#0e1220'/><rect x='10' y='10' width='80' height='80' rx='18' fill='#161d34'/><circle cx='30' cy='68' r='9' fill='#5ce1a6'/><circle cx='27' cy='66' r='1.9' fill='#08301f'/><circle cx='33' cy='66' r='1.9' fill='#08301f'/><circle cx='68' cy='36' r='8' fill='#ff6b6b'/><circle cx='65' cy='33' r='2.6' fill='rgba(255,255,255,.55)'/><g stroke='#ff6b6b' stroke-width='3' stroke-linecap='round' opacity='.45'><path d='M46 36 h10'/><path d='M32 36 h6'/></g><path d='M28 60 q10 -18 30 -22' stroke='#ffd54a' stroke-width='3' fill='none' stroke-dasharray='5 5' stroke-linecap='round'/><g stroke='#8b97bd' stroke-width='3' stroke-linecap='round'><path d='M72 66 v12'/><path d='M80 66 v12'/></g></svg>";
+
+const ICON_TWOBACK =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#151226'/><g fill='#2a2447' stroke='#3a3358' stroke-width='2'><rect x='8' y='34' width='24' height='32' rx='6'/><rect x='38' y='30' width='24' height='40' rx='6'/></g><rect x='68' y='26' width='26' height='48' rx='7' fill='#f6f1e4' stroke='#3a3358' stroke-width='2'/><g font-family='sans-serif' font-size='20' text-anchor='middle'><text x='20' y='58' fill='#6b62a0'>?</text><text x='50' y='58' fill='#6b62a0'>?</text></g><circle cx='81' cy='44' r='8' fill='#ffb44a'/><circle cx='78' cy='42' r='1.8' fill='#151226'/><circle cx='84' cy='42' r='1.8' fill='#151226'/><path d='M77 48 q4 4 8 0' stroke='#151226' stroke-width='2' fill='none' stroke-linecap='round'/><path d='M18 76 q31 12 62 0' stroke='#ffb44a' stroke-width='3' fill='none' stroke-dasharray='5 4' stroke-linecap='round'/></svg>";
+
+const ICON_ROBOTORDER =
+  "<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' rx='24' fill='#101728'/><g fill='#243252'><rect x='10' y='52' width='24' height='24' rx='5'/><rect x='38' y='52' width='24' height='24' rx='5'/><rect x='66' y='52' width='24' height='24' rx='5'/></g><g transform='translate(22 40)'><rect x='-13' y='-13' width='26' height='26' rx='7' fill='#4ad0b5'/><path d='M0 -15 L7 -6 L-7 -6 Z' fill='#0d2b26'/><circle cx='-5' cy='2' r='2.6' fill='#0d2b26'/><circle cx='5' cy='2' r='2.6' fill='#0d2b26'/></g><path d='M78 26 l7 12 h-14 z' fill='#ffd54a'/><g fill='none' stroke='#ffd54a' stroke-width='4' stroke-linecap='round'><path d='M44 30 h16'/><path d='M54 24 l7 6 -7 6'/></g></svg>";
 
 export const games: GameMeta[] = [
   // === ここに新しいゲームを追記 ===
@@ -3745,6 +3840,1107 @@ export const games: GameMeta[] = [
     addedIn: '0.99.0',
     load: () => import('./mirror-twins/game'),
   },
+  {
+    id: 'hundred-road',
+    no: 100,
+    title: 'ひゃくマスの旅',
+    kana: 'ひゃくますのたび',
+    description:
+      'サイコロは振らない！手札の「歩数カード」をえらんで 100マスのすごろくを すすもう。ぴったり100マス目に とまれたら クリア。🌀ワープ・⛔とげ・⭐・🔒ゲートを 読みきる 記念の高難度パズル。全5面。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 面クリア＋最少手数ボーナス。最少手数で全5面を通すと 1665〜1690点（ボットで実測）。
+    // 銅＝ヒントを使っても完走できた／銀＝ヒントひかえめ／金＝ほぼ最短で完走。実機playtest前提の仮値
+    medals: { bronze: 800, silver: 1200, gold: 1550 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    help: {
+      goal:
+        '手札の「歩数カード」を 1まいずつ えらんで、100マスの 盤を すすむ。ぴったり 100マス目に とまれたら クリア！100を こえたぶんは はね返って もどるよ。全5面。',
+      controls: [
+        'カードを タップ：その数だけ すすむ（使ったカードは なくなる）',
+        'カードに 行き先（→○○マス）が 書いてあるので 見くらべよう',
+        '下のボタン：ヒント（次の1手が光る・その面の点は はんぶん）／やりなおし（その面を さいしょから）',
+      ],
+      tips: [
+        '🌀ワープは 止まると 矢印の先へ 飛ぶ（行き先は 盤に 出ている）',
+        '⛔とげに 止まると いちばん大きい カードを なくしてしまう',
+        '⭐に 止まると カードが 1まい ふえる。🔒ゲートは ⭐が そろうまで 通れない（ワープでも 先へは 行けない）',
+        'ぴったり とまれなくなったら「つみ」。教えてくれるので やりなおそう',
+      ],
+    },
+    achievements: [
+      { id: 'first-clear', name: 'たびのはじまり', desc: 'さいしょの面を クリアした' },
+      { id: 'clear-3', name: 'はんぶん こえた', desc: '3面 クリアした' },
+      { id: 'all-clear', name: '100マス せいは', desc: '全5面を クリアした' },
+      { id: 'par-clear', name: 'むだのない旅', desc: '全5面を さいたん手数で クリアした', secret: true },
+      { id: 'no-spike', name: 'とげ知らず', desc: '一度も とげを 踏まずに 全5面クリアした', secret: true },
+      { id: 'score-hi', name: 'ひゃくマスマスター', desc: '1500点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🏁', svg: ICON_HUNDRED },
+    addedIn: '1.0.0',
+    load: () => import('./hundred-road/game'),
+  },
+
+  // ===== ここから かくれゲーム（本編100本をすべてあそぶと解放される） =====
+  {
+    id: 'word-build',
+    no: 101,
+    title: 'ことばならべ',
+    kana: 'ことばならべ',
+    description: 'えを ヒントに、バラバラの ひらがなを ならべて ことばを作ろう！ぜんぶで 8もん。まちがえても やり直せる、かくれゲームの1本。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1問120点＋全問ボーナス100＋速さボーナス。実機playtest前提の仮値
+    medals: { bronze: 500, silver: 800, gold: 1100 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'うえの えが ヒント。したの もじタイルを タップして、こたえの ならびを 作ろう！ぜんぶで 8もん（さいしょは3もじ、あとから4もじ）。',
+      controls: ['もじタイルを タップ：じゅんばんに ならぶ', 'ならべた もじを タップ：もどす', 'ぜんぶ うまったら じどうで こたえあわせ'],
+      tips: ['まちがえても 何回でも やり直せる（点が すこし へるだけ）', 'はやく こたえるほど 点が高い', 'こえに出して 読んでみると 見つけやすいよ'],
+    },
+    achievements: [
+      { id: 'first-word', name: 'はじめの ことば', desc: 'さいしょの もんだいに せいかいした' },
+      { id: 'half', name: 'はんぶん とうたつ', desc: '4もん せいかいした' },
+      { id: 'all-clear', name: 'ぜんもん せいかい', desc: '8もん ぜんぶ せいかいした' },
+      { id: 'no-miss', name: 'ノーミス', desc: '一度も まちがえずに ぜんもん せいかいした', secret: true },
+      { id: 'speedy', name: 'はやくち はかせ', desc: '100びょう いないに ぜんもん せいかいした', secret: true },
+      { id: 'score-hi', name: 'ことばマスター', desc: '900点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🔤', svg: ICON_WORDBUILD },
+    addedIn: '1.0.0',
+    load: () => import('./word-build/game'),
+  },
+  {
+    id: 'cup-hide',
+    no: 102,
+    title: 'どこに かくれた？',
+    kana: 'どこにかくれた',
+    description: 'カップの下に かくれた ボールを 目で追いかけよう！入れかえが おわったら どれか タップ。カップは 3こ→5こ に ふえていく 全8ラウンド。',
+    category: 'memory',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1ラウンド 100〜200点＋全問ボーナス150。実機playtest前提の仮値
+    medals: { bronze: 500, silver: 850, gold: 1200 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'ボールが どのカップに 入ったか おぼえて、入れかえが おわったら そのカップを タップ！カップは 3こから 5こ に ふえていくよ。全8ラウンド。',
+      controls: ['見ているだけ：ボールの ばしょを おぼえる → 入れかえを 目で追う', 'カップを タップ：こたえる'],
+      tips: ['入れかえの はやさは いつも同じ。あわてなくて だいじょうぶ', 'はずれても つぎの ラウンドへ すすめる', 'カップが 多いほど 点が高い'],
+    },
+    achievements: [
+      { id: 'first-find', name: 'はじめて あてた', desc: 'はじめて ボールを 当てた' },
+      { id: 'half', name: 'めが いい', desc: '4かい 当てた' },
+      { id: 'streak-3', name: '3れんぞく', desc: '3かい つづけて 当てた' },
+      { id: 'five-cup', name: '5カップ とっぱ', desc: 'カップ5この ラウンドで 当てた', secret: true },
+      { id: 'all-clear', name: 'パーフェクト', desc: '8ラウンド ぜんぶ 当てた', secret: true },
+      { id: 'score-hi', name: 'めのつけどころ', desc: '900点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🥤', svg: ICON_CUPHIDE },
+    addedIn: '1.0.0',
+    load: () => import('./cup-hide/game'),
+  },
+  {
+    id: 'color-mix',
+    no: 103,
+    title: 'いろまぜラボ',
+    kana: 'いろまぜらぼ',
+    description: 'あか・あお・きいろを まぜて、おてほんと おなじ色を つくろう！じかん せいげんなし・しっぱいなしの のんびり実験。全6もん。',
+    category: 'chill',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1問 20〜200点（ぴったりで200）。全6問で最大1200点。実機playtest前提の仮値
+    medals: { bronze: 500, silver: 800, gold: 1050 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'ひだりの「おてほん」と おなじ色を、あか・あお・きいろの しずくを まぜて つくろう。ちかいほど 高とくてん！全6もん。',
+      controls: ['色ボタンを タップ：しずくを1てき 足す', 'すこし もどす：いちばん 多い色を1てき へらす', 'これで けってい：こたえあわせ'],
+      tips: ['同じ 比なら 同じ色（1:1 と 2:2 は おなじ）。少ない しずくでも つくれるよ', 'じかん せいげんは ないので ゆっくり くらべよう', 'ぴったり合うと 200てん！'],
+    },
+    achievements: [
+      { id: 'first-mix', name: 'はじめての まぜまぜ', desc: 'さいしょの もんだいを こたえた' },
+      { id: 'all-clear', name: 'ラボ そつぎょう', desc: '6もん ぜんぶ こたえた' },
+      { id: 'perfect', name: 'ぴったり', desc: 'おてほんと ぴったり 同じ色を つくった' },
+      { id: 'perfect-3', name: 'いろの まほうつかい', desc: 'ぴったりを 3かい 出した', secret: true },
+      { id: 'no-undo', name: 'いっぱつ しょうぶ', desc: '一度も もどさずに 6もん こたえた', secret: true },
+      { id: 'score-hi', name: 'カラーマスター', desc: '900点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🎨', svg: ICON_COLORMIX },
+    addedIn: '1.0.0',
+    load: () => import('./color-mix/game'),
+  },
+  {
+    id: 'body-clock',
+    no: 104,
+    title: 'たいないどけい',
+    kana: 'たいないどけい',
+    description: '「5びょう ぴったりで タップ」。数字も 目もりも 見えないので、たよりは 体の中の 時計だけ！全5ラウンドの ふしぎな タイミングしょうぶ。',
+    category: 'timing',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1ラウンド 10〜200点（±0.15秒で200）。全5ラウンドで最大1000点。実機playtest前提の仮値
+    medals: { bronze: 400, silver: 620, gold: 820 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'お題の じかん（3〜8びょう）を 心の中で 数えて、ぴったりだと思った しゅんかんに タップ！ズレが 小さいほど 高とくてん。全5ラウンド。',
+      controls: ['画面を タップ：スタート', 'もういちど タップ：ストップ'],
+      tips: ['さいしょの 1びょうだけ リングが 教えてくれる。その ペースで 数えよう', '数字も うごく物も 出ないので、目より 心の中の リズムを たよりに', '±0.5びょう いないなら じゅうぶん 高とくてん！'],
+    },
+    achievements: [
+      { id: 'first-stop', name: 'はじめての けいそく', desc: 'さいしょの ラウンドを こたえた' },
+      { id: 'all-rounds', name: 'とけいづくり', desc: '5ラウンド ぜんぶ こたえた' },
+      { id: 'just', name: 'ぴったり', desc: 'ズレ 0.15びょう いないを 出した' },
+      { id: 'just-3', name: 'たいないどけい めいじん', desc: 'ぴったりを 3かい 出した', secret: true },
+      { id: 'steady', name: 'ぶれない こころ', desc: '5ラウンド ぜんぶ ±0.5びょう いなかった', secret: true },
+      { id: 'score-hi', name: 'ときの ししゃ', desc: '700点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '⏳', svg: ICON_BODYCLOCK },
+    addedIn: '1.0.0',
+    load: () => import('./body-clock/game'),
+  },
+  {
+    id: 'carry-water',
+    no: 105,
+    title: 'こぼさないで',
+    kana: 'こぼさないで',
+    description: 'なみなみの コップを ゴールまで はこぶ！かたむけないと 動かないけれど、急に かたむけると 水が こぼれる…そっと 運ぶ 全5ステージ。センサーが なくても ドラッグで あそべる。',
+    category: 'sensor',
+    orientation: 'portrait',
+    optionalSensors: ['motion'],
+    scoring: 'points',
+    // 1ステージ 100＋のこった水×2（最大300点）。全5ステージで最大1500点。実機playtest前提の仮値
+    medals: { bronze: 600, silver: 1000, gold: 1350 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'コップを 右の ゴールまで はこんで、そこで とめよう。かたむけると 動くけれど 水面も ゆれる。ゆれが 大きいと こぼれるので そっと 動かして！のこった水が 多いほど 高とくてん。全5ステージ。',
+      controls: [
+        'かたむける：コップが 動く（センサーを 許可した ばあい）',
+        '画面を ドラッグ：かたむけと 同じように 動く（センサーなしでも OK）',
+        'すいへい：いまの もちかたを まっすぐとして 覚え直す',
+      ],
+      tips: ['いきなり 大きく かたむけないで、少しずつ かたむけると こぼれない', 'ゴールの 手前では 反対に かたむけて ブレーキ', 'ステージが すすむと 必要な水が ふえる（さいごは 82%）'],
+    },
+    achievements: [
+      { id: 'first-carry', name: 'はじめての おつかい', desc: 'さいしょの ステージを クリアした' },
+      { id: 'half', name: 'はんぶん とうたつ', desc: '3ステージ クリアした' },
+      { id: 'all-clear', name: 'みずうんぱん めいじん', desc: '全5ステージ クリアした' },
+      { id: 'full-water', name: 'いってきも こぼさず', desc: '水を まんぱいのまま クリアした', secret: true },
+      { id: 'no-retry', name: 'いちどで せいこう', desc: 'やりなおし なしで 全5ステージ クリアした', secret: true },
+      { id: 'score-hi', name: 'みずの まもりびと', desc: '1100点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🥛', svg: ICON_CARRYWATER },
+    addedIn: '1.0.0',
+    load: () => import('./carry-water/game'),
+  },
+  {
+    id: 'robot-order',
+    no: 106,
+    title: 'ロボットめいれい',
+    kana: 'ろぼっとめいれい',
+    description: 'めいれいを ならべてから ▶ で いっきに 実行！とちゅうで 直せないから、頭の中で さいごまで うごかそう。くりかえしを使わないと 入らない 全5ステージ。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1面 80〜320点（うごかした回数が少ないほど高い）。満点1600。実機playtest前提の仮値
+    medals: { bronze: 700, silver: 1100, gold: 1450 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'ロボットに めいれいを ならべて、ほしを ぜんぶ とらせよう！▶ を おすと さいごまで 走る。とちゅうでは 直せないよ。全5ステージ。',
+      controls: [
+        'めいれいボタンを タップ：えらんでいる わくに ならぶ',
+        'ならべた めいれいを タップ：もどす',
+        '▶ うごかす：さいしょから 実行',
+      ],
+      tips: [
+        'わくの数は「さいたん」ぴったり。むだな めいれいは 1つも 入らない',
+        'くりかえし わくに ならべた めいれいは、🔁 1こで まとめて 走る',
+        'うごかす 回数が 少ないほど 高とくてん'
+      ],
+    },
+    achievements: [
+      { id: 'first-clear', name: 'はじめての プログラム', desc: '1ステージ クリアした' },
+      { id: 'half', name: 'ちゅうばん とっぱ', desc: '3ステージ クリアした' },
+      { id: 'use-loop', name: 'くりかえし はっけん', desc: 'くりかえしを つかって クリアした' },
+      { id: 'all-clear', name: 'ぜんステージ クリア', desc: '5ステージ ぜんぶ クリアした', secret: true },
+      { id: 'one-shot', name: 'いっぱつ プログラマー', desc: 'ぜんステージを 1回の 実行だけで クリアした', secret: true },
+      { id: 'score-hi', name: 'ロボットはかせ', desc: '1300点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🤖', svg: ICON_ROBOTORDER },
+    addedIn: '1.0.0',
+    load: () => import('./robot-order/game'),
+  },
+  {
+    id: 'two-back',
+    no: 107,
+    title: 'ふたつ まえ',
+    kana: 'ふたつまえ',
+    description: '顔が1まいずつ 流れてくる。「n つ まえ」と おなじ顔が 出たら タップ！1つ前→2つ前→3つ前と むずかしくなる、記おくの ちょうせん。',
+    category: 'memory',
+    orientation: 'portrait',
+    scoring: 'points',
+    // ぴったり1回 40〜80点＋パート完璧100点。満点1100。実機playtest前提の仮値
+    medals: { bronze: 450, silver: 720, gold: 980 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'どうぶつの顔が 1まいずつ 出てくるよ。「n つ まえ」と おなじ顔だったら タップ！n は 1 → 2 → 3 と ふえていく。ぜんぶで 3パート。',
+      controls: ['画面を タップ：「いまのは n つ まえと おなじ」と こたえる', '1まいに つき 1回だけ こたえられる'],
+      tips: [
+        'まえの顔は 画面に のこらない。心の中で「いま・1つ前・2つ前」を となえよう',
+        'ちがうのに タップすると 20点 へる。まよったら こたえない のも 手',
+        'おてつき なしで パートを こなすと 100点 ボーナス',
+      ],
+    },
+    achievements: [
+      { id: 'first-hit', name: 'はじめての ぴったり', desc: 'はじめて 一致を 当てた' },
+      { id: 'level2', name: 'ふたつまえに ちょうせん', desc: '「2つ まえ」の パートで 当てた' },
+      { id: 'level3', name: 'みっつまえに ちょうせん', desc: '「3つ まえ」の パートで 当てた' },
+      { id: 'no-false', name: 'おてつき なし', desc: '一度も おてつきせずに さいごまで いった', secret: true },
+      { id: 'all-hit', name: 'ひとつも のがさない', desc: '一致を ひとつも 見のがさなかった', secret: true },
+      { id: 'score-hi', name: 'きおくの たつじん', desc: '900点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🧠', svg: ICON_TWOBACK },
+    addedIn: '1.0.0',
+    load: () => import('./two-back/game'),
+  },
+  {
+    id: 'time-stop',
+    no: 108,
+    title: 'とまった せかい',
+    kana: 'とまったせかい',
+    description: '指を うごかしたぶん だけ 時間が すすむ ふしぎな せかい。止まれば たまも ぼうも 完全に 止まる。うごける きょりの中で ほしを ぜんぶ 集めよう。全5ステージ。',
+    category: 'action',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1面 150点＋のこした きょり/6。満点はステージ次第（ボット実測で較正）。実機playtest前提の仮値
+    medals: { bronze: 700, silver: 1000, gold: 1250 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: '画面を なぞって うごこう。じかんは「指が うごいたぶん」だけ すすむよ。ほしを ぜんぶ 集めたら クリア！ぶつかるか、うごける きょりが つきたら やりなおし。全5ステージ。',
+      controls: ['画面を なぞる：なぞったぶん だけ うごく（時間も すすむ）', '指を 止める：世界も 止まる（いくらでも 考えられる）'],
+      tips: [
+        'あぶない ときは 安全な ところで 小さく うごいて 時間を すすめよう',
+        'ただし うごいたぶん「きょり」が へる。むだ動きの しすぎに ちゅうい',
+        'のこした きょりが 多いほど 点が 高い',
+      ],
+    },
+    achievements: [
+      { id: 'first-escape', name: 'はじめての だっしゅつ', desc: '1ステージ クリアした' },
+      { id: 'half', name: 'ちゅうばん とっぱ', desc: '3ステージ クリアした' },
+      { id: 'thrifty', name: 'むだのない うごき', desc: 'きょりを 半分いじょう のこして クリアした' },
+      { id: 'all-clear', name: 'ぜんステージ クリア', desc: '5ステージ ぜんぶ クリアした', secret: true },
+      { id: 'no-retry', name: 'いちども ぶつからない', desc: '一度も やりなおさずに ぜんぶ クリアした', secret: true },
+      { id: 'score-hi', name: 'ときの ぬしゃ', desc: '1100点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '⏸', svg: ICON_TIMESTOP },
+    addedIn: '1.0.0',
+    load: () => import('./time-stop/game'),
+  },
+  {
+    id: 'polyrhythm',
+    no: 109,
+    title: 'りょうてポリリズム',
+    kana: 'りょうてぽりりずむ',
+    description: 'ひだりは2はくごと、みぎは3はくごと…左右の手で べつべつの リズムを 同時に きざもう。ガイドは 最初だけ！全4ステージの 高難度リズム。',
+    category: 'timing',
+    orientation: 'portrait',
+    scoring: 'points',
+    // ぴったり20点・セーフ10点・よけい-10点。60回すべて ぴったりで 1200点。
+    // ※ かた手だけ完璧だと 720点（ボット実測）。銀からは 両手が いる ように置いた。実機playtest前提の仮値
+    medals: { bronze: 560, silver: 820, gold: 1050 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: '画面の 左半分と 右半分を、りょうての おやゆびで たたこう。ひだりと みぎで たたく間かくが ちがうよ（2はくと3はく など）。ガイドは とちゅうで 消える！全4ステージ。',
+      controls: ['左半分を タップ：ひだりの リズム', '右半分を タップ：みぎの リズム', 'はじめに カウント4はく が 鳴る'],
+      tips: [
+        'まず「ガイドあり」の間に 音を よく聞いて 体で おぼえよう',
+        'ガイドが消えても テンポは 同じ。あわてず 同じ間かくで',
+        'ちがう ところで たたくと 10点 へる。まよったら たたかない',
+      ],
+    },
+    achievements: [
+      { id: 'first-perfect', name: 'はじめての ぴったり', desc: 'はじめて ぴったりを 出した' },
+      { id: 'both-hands', name: 'りょうての れんけい', desc: 'ひだりと みぎ 両方で ぴったりを 出した' },
+      { id: 'blind-5', name: 'ガイドなしでも', desc: 'ガイドが 消えたあとに ぴったりを 5回 出した' },
+      { id: 'stage-perfect', name: 'ノーミス ステージ', desc: '見のがしも よけいな タップも なしで 1ステージ こなした', secret: true },
+      { id: 'combo-10', name: '10れんぞく ぴったり', desc: 'ぴったりを 10回 つづけた', secret: true },
+      { id: 'score-hi', name: 'ポリリズム マスター', desc: '950点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🥁', svg: ICON_POLYRHYTHM },
+    addedIn: '1.0.0',
+    load: () => import('./polyrhythm/game'),
+  },
+  {
+    id: 'paper-fold',
+    no: 110,
+    title: 'おりがみパズル',
+    kana: 'おりがみぱずる',
+    description: '紙を 線で 折っていくと ほしが かさなる。ぜんぶの ほしを 1つの マスに かさねよう！おれる かいすうは ぴったりしか ない 全5ステージ。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1面 100〜300点（ちょうせん回数が少ないほど高い）。満点1500。実機playtest前提の仮値
+    medals: { bronze: 650, silver: 1000, gold: 1350 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: '紙を 折って、ちらばった ほしを ぜんぶ 1つの マスに かさねよう！おれる かいすうは 決まっていて、ぴったり しか ないよ。全5ステージ。',
+      controls: [
+        'うえの タブを タップ：その たての線で 折る',
+        'ひだりの タブを タップ：その よこの線で 折る',
+        '⟲ ひらきなおす：さいしょの 紙に もどす',
+      ],
+      tips: [
+        '折ると 位置が 左右（上下）に ひっくり返る。頭の中で 折ってから タップしよう',
+        '同じ線でも 折る じゅんばんで 結果が 変わる',
+        'ひらきなおす 回数が 少ないほど 点が 高い',
+      ],
+    },
+    achievements: [
+      { id: 'first-fold', name: 'はじめの おりがみ', desc: '1ステージ クリアした' },
+      { id: 'half', name: 'ちゅうばん とっぱ', desc: '3ステージ クリアした' },
+      { id: 'one-shot', name: 'いっぱつで かさねた', desc: '1回目の ちょうせんで クリアした' },
+      { id: 'all-clear', name: 'ぜんステージ クリア', desc: '5ステージ ぜんぶ クリアした', secret: true },
+      { id: 'perfect-all', name: 'おりがみ めいじん', desc: 'ぜんステージを 1回目の ちょうせんで クリアした', secret: true },
+      { id: 'score-hi', name: 'かさねの たつじん', desc: '1150点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '📄', svg: ICON_PAPERFOLD },
+    addedIn: '1.0.0',
+    load: () => import('./paper-fold/game'),
+  },
+  {
+    id: 'race-guess',
+    no: 111,
+    title: 'どっちが 先？',
+    kana: 'どっちがさき',
+    description: '2つの点が べつべつの きょり・速さで ゴールへ。着く前に「先に着くほう」を こたえよう！近いほうが 先とは かぎらない 全10もん。',
+    category: 'reflex',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1もん 50〜140点＋ぜんもんボーナス150。満点1100。実機playtest前提の仮値
+    medals: { bronze: 450, silver: 720, gold: 950 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'ひだりと みぎの 点が、ちがう きょり・ちがう 速さで ゴール線へ すすむよ。どちらが 先に つくかを、着く前に こたえよう！全10もん。',
+      controls: ['「ひだり」ボタン：ひだりが 先だと こたえる', '「みぎ」ボタン：みぎが 先だと こたえる'],
+      tips: [
+        '近いほうが 先とは かぎらない。遠くても 速ければ 先に つく',
+        'こたえる時間は みじかい。すすむ 速さを すぐに 見くらべよう',
+        'あとの もんだいほど 差が きわどく、点も 高い',
+      ],
+    },
+    achievements: [
+      { id: 'first-right', name: 'はじめての せいかい', desc: 'はじめて 当てた' },
+      { id: 'half', name: 'はんぶん とっぱ', desc: '5もん 当てた' },
+      { id: 'close-call', name: 'きわどい しょうぶ', desc: '差が 0.2びょう いかの もんだいを 当てた' },
+      { id: 'streak-5', name: '5れんぞく', desc: '5かい つづけて 当てた', secret: true },
+      { id: 'all-right', name: 'ぜんもん せいかい', desc: '10もん ぜんぶ 当てた', secret: true },
+      { id: 'score-hi', name: '見きわめの たつじん', desc: '900点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🏁', svg: ICON_RACEGUESS },
+    addedIn: '1.0.0',
+    load: () => import('./race-guess/game'),
+  },
+  {
+    id: 'phase-odd',
+    no: 112,
+    title: 'ひとつだけ ズレてる',
+    kana: 'ひとつだけずれてる',
+    description: 'たくさんの マルが そろって ふくらんだり しぼんだり。その中で 1つだけ リズムが ズレている ものを さがそう！ズレは だんだん 小さくなる 全10もん。',
+    category: 'reflex',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1もん 60〜150点＋はやおしボーナス30。満点1350。実機playtest前提の仮値
+    medals: { bronze: 550, silver: 900, gold: 1150 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'マルは ぜんぶ そろって ふくらんだり しぼんだり しているよ。でも 1つだけ タイミングが ズレている。それを 見つけて タップ！全10もん・1もん 9びょう。',
+      controls: ['ズレていると 思う マルを タップ'],
+      tips: [
+        '色や 大きさでは 分からない。「いつ ふくらむか」を 見くらべよう',
+        'いちばん 大きくなる しゅんかんが そろっていないマルを さがす',
+        'まちがえると 20点へる。3びょう いないに 見つけると ボーナス',
+      ],
+    },
+    achievements: [
+      { id: 'first-find', name: 'はじめて 見つけた', desc: 'はじめて ズレを 見つけた' },
+      { id: 'half', name: 'はんぶん とっぱ', desc: '5もん せいかいした' },
+      { id: 'quick-eye', name: 'すばやい目', desc: '2びょう いないに 見つけた' },
+      { id: 'big-grid', name: '30マスから 発見', desc: '30マスの もんだいで 見つけた', secret: true },
+      { id: 'all-find', name: 'ぜんもん せいかい', desc: '10もん ぜんぶ 見つけた', secret: true },
+      { id: 'score-hi', name: 'ズレ さがしの めいじん', desc: '1100点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🫧', svg: ICON_PHASEODD },
+    addedIn: '1.0.0',
+    load: () => import('./phase-odd/game'),
+  },
+  {
+    id: 'tilt-safe',
+    no: 113,
+    title: 'かたむき きんこ',
+    kana: 'かたむききんこ',
+    description: 'スマホの かたむきが そのまま ダイヤルの めもり！あんしょうばんの 数字に 合わせて じっと とめよう。ぶれたら やり直し。ぜんぶで 4つの きんこ。',
+    category: 'sensor',
+    orientation: 'portrait',
+    optionalSensors: ['motion'],
+    scoring: 'points',
+    // 1つ 200〜360点（はやいほど高い）。満点1240。実機playtest前提の仮値
+    medals: { bronze: 550, silver: 850, gold: 1100 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'かたむけると ダイヤルの はりが 動くよ。あんしょうばんの 数字に はりを 合わせて、そのまま じっと とめると 1つ かくてい！ぜんぶ そろえたら きんこが あく。4つ ぜんぶ あけよう。',
+      controls: [
+        'スマホを かたむける：はりが 動く',
+        '画面を ドラッグ：センサーが なくても 同じように 動く',
+        'すいへい：いまの もちかたを まっすぐとして おぼえ直す',
+      ],
+      tips: [
+        'かたむけるのは ほんの すこしで いい。ゆっくり 近づけよう',
+        'とちゅうで ぶれると わが 0に もどる。息を とめる くらいで',
+        'はやく あけるほど 点が 高い',
+      ],
+    },
+    achievements: [
+      { id: 'first-open', name: 'はじめての かいじょう', desc: 'きんこを 1つ あけた' },
+      { id: 'half', name: 'はんぶん とっぱ', desc: 'きんこを 2つ あけた' },
+      { id: 'steady-hand', name: 'ぶれない手', desc: '一度も ぶれずに 数字を 1つ そろえた' },
+      { id: 'speedy', name: 'はやわざ', desc: '15びょう いないに きんこを あけた', secret: true },
+      { id: 'all-open', name: 'ぜんぶ かいじょう', desc: '4つ ぜんぶ あけた', secret: true },
+      { id: 'score-hi', name: 'きんこやぶりの めいじん', desc: '1050点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🔐', svg: ICON_TILTSAFE },
+    addedIn: '1.0.0',
+    load: () => import('./tilt-safe/game'),
+  },
+  {
+    id: 'hose-water',
+    no: 114,
+    title: 'みずまき ホース',
+    kana: 'みずまきほーす',
+    description: 'かたむきで 水の とぶ角度を きめて、花に みずやり！中くらいの 角度で いちばん 遠くへ とどく。ねこや せんたくものは ぬらさないでね。全4ステージ。',
+    category: 'sensor',
+    orientation: 'portrait',
+    optionalSensors: ['motion'],
+    scoring: 'points',
+    // 1ステージ 60〜250点（水を のこすほど高い・ぬらすと -20）。実機playtest前提の仮値
+    medals: { bronze: 420, silver: 620, gold: 800 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'かたむけると 水の とぶ 角度が 変わるよ。ぜんぶの 花を 満タンに したら クリア！水には かぎりがあるので むだづかいに ちゅうい。全4ステージ。',
+      controls: [
+        'スマホを かたむける：水の 角度が 変わる',
+        '画面を ドラッグ：センサーが なくても 同じ',
+        '画面を タップ：水を 出す／止める',
+      ],
+      tips: [
+        '中くらいの 角度が いちばん 遠くへ とどく。上げすぎても 手前に もどるよ',
+        'かべの 向こうの 花は、高く 上げて 山なりに とばそう',
+        'ねこや せんたくものに かけると 20点へる',
+      ],
+    },
+    achievements: [
+      { id: 'first-flower', name: 'はじめの 1りん', desc: '花を 1つ 満タンに した' },
+      { id: 'half', name: 'はんぶん とっぱ', desc: '2ステージ クリアした' },
+      { id: 'dry-cat', name: 'ぬらさず クリア', desc: '一度も ぬらさずに 1ステージ クリアした' },
+      { id: 'all-clear', name: 'ぜんステージ クリア', desc: '4ステージ ぜんぶ クリアした', secret: true },
+      { id: 'never-wet', name: 'ねこに やさしい', desc: '通しで 一度も ぬらさなかった', secret: true },
+      { id: 'score-hi', name: 'みずまき めいじん', desc: '740点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🚿', svg: ICON_HOSEWATER },
+    addedIn: '1.0.0',
+    load: () => import('./hose-water/game'),
+  },
+  {
+    id: 'snow-roll',
+    no: 115,
+    title: 'ゆきだま ころころ',
+    kana: 'ゆきだまころころ',
+    description: 'なぞって 雪玉を 転がすと、雪の上を 通ったぶん 大きくなる。したの たま・まん中・あたま を それぞれ ぴったりの 大きさに して 雪だるまを 作ろう！',
+    category: 'chill',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1つ 60〜200点（ぴったりで200）＋かんせい150。満点750。実機playtest前提の仮値
+    // ※ のんびり系なので 金は 満点の82%（ほぼ完璧を 要求しない）。実機playtest前提の仮値
+    medals: { bronze: 380, silver: 540, gold: 615 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: '雪玉を なぞって 転がそう。雪のある マスを 通ると 大きく、雪のない ところを 通ると すこし 小さくなるよ。うえの わくに ぴったり 合わせて「おく」を おそう。3つ そろえたら 雪だるま かんせい！',
+      controls: ['画面を なぞる：雪玉が 転がる', '「ゆきだるまに おく」：いまの 大きさで おく'],
+      tips: [
+        '大きくなりすぎても だいじょうぶ。雪のない ところで へらせるよ',
+        'じかん制限も しっぱいも ない。ゆっくり 合わせよう',
+        'ちょうど ぴったりだと 200てん。ずれるほど 点が へる',
+      ],
+    },
+    achievements: [
+      { id: 'first-ball', name: 'はじめの たま', desc: '1つ目の たまを おいた' },
+      { id: 'half', name: 'あと ひとつ', desc: '2つ目の たまを おいた' },
+      { id: 'perfect-ball', name: 'ぴったり！', desc: 'ねらいと ぴったり 同じ 大きさで おいた' },
+      { id: 'snowman', name: 'ゆきだるま かんせい', desc: '3つ ぜんぶ おいた', secret: true },
+      { id: 'all-perfect', name: 'かんぺき ゆきだるま', desc: '3つ ぜんぶ ぴったりで おいた', secret: true },
+      { id: 'score-hi', name: 'ゆきだま めいじん', desc: '570点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '⛄', svg: ICON_SNOWROLL },
+    addedIn: '1.0.0',
+    load: () => import('./snow-roll/game'),
+  },
+  {
+    id: 'color-stairs',
+    no: 116,
+    title: 'いろの かいだん',
+    kana: 'いろのかいだん',
+    description: '色の チップを 入れかえて、たて・よこが なめらかな グラデーションに なるように ならべよう！4すみの色だけは 動かせないヒント。全3ばん。',
+    category: 'chill',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1ばん 60〜250点（さいたん手数で250・1手よぶんで-10）。満点750。実機playtest前提の仮値
+    // ※ のんびり系なので 金は 満点の82%（ほぼ完璧を 要求しない）。実機playtest前提の仮値
+    medals: { bronze: 400, silver: 540, gold: 615 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: '色の チップを 2つ タップして 入れかえよう。たて・よこ どちらも なめらかに 色が 変わるように ならべたら せいかい！4すみの色は 動かせないヒントだよ。全3ばん。',
+      controls: ['チップを タップ：えらぶ', 'もう1つ タップ：入れかえる', '同じ チップを もう一度：やめる'],
+      tips: [
+        '4すみから 考えると 分かりやすい。まず ふちを そろえよう',
+        'じかん制限も しっぱいも ない。ゆっくり くらべよう',
+        'さいたん手数で できると 250てん。よぶんな 1手ごとに 10点へる',
+      ],
+    },
+    achievements: [
+      { id: 'first-board', name: 'はじめの 1ばん', desc: '1ばん そろえた' },
+      { id: 'half', name: 'あと ひとつ', desc: '2ばん そろえた' },
+      { id: 'min-swaps', name: 'むだのない 手', desc: 'さいたん手数で そろえた' },
+      { id: 'all-board', name: 'ぜんぶ そろえた', desc: '3ばん ぜんぶ そろえた', secret: true },
+      { id: 'all-min', name: 'かんぺきな ならび', desc: '3ばん ぜんぶ さいたん手数で そろえた', secret: true },
+      { id: 'score-hi', name: 'いろの けんちくか', desc: '570点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🎨', svg: ICON_COLORSTAIRS },
+    addedIn: '1.0.0',
+    load: () => import('./color-stairs/game'),
+  },
+  {
+    id: 'reverse-recall',
+    no: 117,
+    title: 'さかさま おぼえ',
+    kana: 'さかさまおぼえ',
+    description: 'ボタンが 光る じゅんばんを おぼえて、こんどは さいごから 逆に タップ！3こ から 7こ へ のびていく 全8もん。',
+    category: 'memory',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1もん 長さ×30点。満点1200。実機playtest前提の仮値
+    medals: { bronze: 480, silver: 780, gold: 1050 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'ボタンが 1つずつ 光るよ。じゅんばんを おぼえて、さいごに 光ったもの から 逆に タップしよう！3こ から だんだん のびて 7こまで。全8もん。',
+      controls: ['ボタンを タップ：さかさまの じゅんばんで こたえる'],
+      tips: [
+        '前から 思い出すのでは まにあわない。「かたまり」で おぼえよう',
+        '1回 まちがえると そのもんだいは おわり。つぎへ すすむ',
+        '長い もんだいほど 点が 高い',
+      ],
+    },
+    achievements: [
+      { id: 'first-clear', name: 'はじめての さかさま', desc: '1もん せいかいした' },
+      { id: 'half', name: 'はんぶん とっぱ', desc: '4もん せいかいした' },
+      { id: 'len5', name: '5こ さかさま', desc: '5この もんだいを せいかいした' },
+      { id: 'len7', name: '7こ さかさま', desc: '7この もんだいを せいかいした', secret: true },
+      { id: 'all-clear', name: 'ぜんもん せいかい', desc: '8もん ぜんぶ せいかいした', secret: true },
+      { id: 'score-hi', name: 'さかさま はかせ', desc: '900点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🔄', svg: ICON_REVRECALL },
+    addedIn: '1.0.0',
+    load: () => import('./reverse-recall/game'),
+  },
+  {
+    id: 'three-hands',
+    no: 118,
+    title: 'みっつの はり',
+    kana: 'みっつのはり',
+    description: 'はやさの ちがう 3本の 針が まわっているよ。3本が うえの めじるしで そろう しゅんかんに タップ！つぎの チャンスを 読む 全8もん。',
+    category: 'timing',
+    orientation: 'portrait',
+    scoring: 'points',
+    // どんぴしゃ150／ナイス100／セーフ60＋もんだい番号×10。満点1480。実機playtest前提の仮値
+    medals: { bronze: 550, silver: 900, gold: 1200 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: '3本の 針は はやさが ちがうけれど、きまった 間かくで かならず うえで そろうよ。そろった しゅんかんに タップ！ズレが 小さいほど 高とくてん。全8もん。',
+      controls: ['画面を タップ：いま そろった！と こたえる（1もんに 1回）'],
+      tips: [
+        'いちばん おそい針を 見て、いつ うえに もどるか 読もう',
+        '1しゅう目の そろいは 数えない。2回目 からが 本番',
+        'あとの もんだいほど はばが せまく、点も 高い',
+      ],
+    },
+    achievements: [
+      { id: 'first-align', name: 'はじめて そろえた', desc: 'はじめて 3本を そろえた' },
+      { id: 'half', name: 'はんぶん とっぱ', desc: '4もん せいかいした' },
+      { id: 'perfect-align', name: 'どんぴしゃ', desc: 'いちばん せまい はばで 当てた' },
+      { id: 'streak-4', name: '4れんぞく', desc: '4かい つづけて せいかいした', secret: true },
+      { id: 'all-align', name: 'ぜんもん せいかい', desc: '8もん ぜんぶ せいかいした', secret: true },
+      { id: 'score-hi', name: 'とけいの めいじん', desc: '1100点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🕰', svg: ICON_THREEHANDS },
+    addedIn: '1.0.0',
+    load: () => import('./three-hands/game'),
+  },
+  {
+    id: 'wall-hole',
+    no: 119,
+    title: 'かべの あな',
+    kana: 'かべのあな',
+    description: 'せまってくる かべには「じぶんと 同じ形の あな」が あいている。なぞって よこに、タップで まわして、形も 向きも 合わせて くぐりぬけよう！全12まい。',
+    category: 'action',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1まい 50〜116点＋ノーミス150。満点1146。実機playtest前提の仮値
+    medals: { bronze: 450, silver: 750, gold: 1000 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: '上から かべが おりてくるよ。かべに あいた あなは じぶんと 同じ形。よこの 位置と 向きを 合わせて くぐりぬけよう！ぶつかると ライフが へる（3つまで）。全12まい。',
+      controls: ['画面を なぞる：よこに 1マスずつ 動く', '画面を タップ：90度 まわる'],
+      tips: [
+        'したの ことばが「このまま！ ぴったり」に なれば 通れるよ',
+        'まわすと 出っぱりの 向きが 変わる。列も ずれるので 見なおそう',
+        'あとの かべほど はやい。早めに 合わせよう',
+      ],
+    },
+    achievements: [
+      { id: 'first-pass', name: 'はじめて とおった', desc: 'かべを 1まい くぐった' },
+      { id: 'half', name: 'はんぶん とっぱ', desc: 'かべを 6まい くぐった' },
+      { id: 'streak-5', name: '5れんぞく', desc: '5まい つづけて くぐった' },
+      { id: 'all-pass', name: 'ぜんぶ とおった', desc: '12まい ぜんぶ くぐった', secret: true },
+      { id: 'no-crash', name: 'むきず', desc: '一度も ぶつからずに 通しきった', secret: true },
+      { id: 'score-hi', name: 'かたち あわせの めいじん', desc: '950点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🧱', svg: ICON_WALLHOLE },
+    addedIn: '1.0.0',
+    load: () => import('./wall-hole/game'),
+  },
+  {
+    id: 'rule-next',
+    no: 120,
+    title: 'きまりを 見ぬけ',
+    kana: 'きまりをみぬけ',
+    description: '形・色・大きさが ならんでいるよ。かくれた きまりを 見ぬいて、つぎに 来るものを 4つから えらぼう！だんだん きまりが ふえる 全8もん。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1もん 80〜150点＋はやおし20＋ぜんもん150。満点1230。実機playtest前提の仮値
+    medals: { bronze: 480, silver: 780, gold: 1050 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: '6つ ならんだ ものを 見て、7つ目に 来るものを 4つの中から えらぼう。形・色・大きさは それぞれ べつの まわりかたで くりかえしているよ。全8もん。',
+      controls: ['4つの中から タップ：これが つぎだと こたえる'],
+      tips: [
+        '形だけ・色だけ を 順に 目で 追うと 見つけやすい',
+        'あとの もんだいは 形・色・大きさが 同時に 変わる',
+        '20びょう いないに こたえよう。6びょう いないなら ボーナス',
+      ],
+    },
+    achievements: [
+      { id: 'first-right', name: 'はじめての せいかい', desc: 'はじめて 当てた' },
+      { id: 'half', name: 'はんぶん とっぱ', desc: '4もん 当てた' },
+      { id: 'quick', name: 'ひらめき', desc: '6びょう いないに 当てた' },
+      { id: 'streak-5', name: '5れんぞく', desc: '5かい つづけて 当てた', secret: true },
+      { id: 'all-right', name: 'ぜんもん せいかい', desc: '8もん ぜんぶ 当てた', secret: true },
+      { id: 'score-hi', name: 'きまりの はかせ', desc: '900点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🔍', svg: ICON_RULENEXT },
+    addedIn: '1.0.0',
+    load: () => import('./rule-next/game'),
+  },
+  {
+    id: 'chain-blast',
+    no: 121,
+    title: 'れんさ ばくはつ',
+    kana: 'れんさばくはつ',
+    description: '玉を 1か所だけ タップすると、上下左右に 火が とんで つぎの玉も はれつ！どこから 始めれば いちばん 長く つながる？全6もん・1もん 1タップ。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // par ちょうどで200点・8割で130・5割で70。満点1200。実機playtest前提の仮値
+    medals: { bronze: 500, silver: 800, gold: 1050 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: '玉の 数字は「火が とぶ マスの数」（上下左右）。1か所 タップすると そこから 連鎖して はれつするよ。いちばん 長く つながる 起点を さがそう！全6もん。',
+      controls: ['玉を タップ：そこから はれつ（1もんに 1回だけ）'],
+      tips: [
+        '数字の 大きい玉は 遠くまで 火が とぶ。中つぎに つかおう',
+        '「さいこう れんさ」に とどけば 200てん。とどかなくても 点は 入る',
+        'はしっこの 玉から 始めると 多くを まきこめることも ある',
+      ],
+    },
+    achievements: [
+      { id: 'first-chain', name: 'はじめての れんさ', desc: '1もん こたえた' },
+      { id: 'half', name: 'はんぶん とっぱ', desc: '3もん こたえた' },
+      { id: 'perfect-chain', name: 'さいこう れんさ', desc: 'いちばん長い れんさを 出した' },
+      { id: 'big-chain', name: '10れんさ', desc: '10こ いじょう つなげた', secret: true },
+      { id: 'all-perfect', name: 'れんさの 名人', desc: '6もん ぜんぶ さいこうの れんさを 出した', secret: true },
+      { id: 'score-hi', name: 'ばくはつ はかせ', desc: '950点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '💥', svg: ICON_CHAINBLAST },
+    addedIn: '1.0.0',
+    load: () => import('./chain-blast/game'),
+  },
+  {
+    id: 'twin-worlds',
+    no: 122,
+    title: 'ふたつの せかい',
+    kana: 'ふたつのせかい',
+    description: '上と下の せかいに 1人ずつ。タップ1回で 2人が 同時に ジャンプ！上でも 下でも 安全な しゅんかんを 見つけて 走りぬけよう。',
+    category: 'action',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1つ かわして30点×33こ＋ノーミス150＝満点1140（じゃまものの数は いつも同じ）。実機playtest前提の仮値
+    medals: { bronze: 480, silver: 780, gold: 1020 },
+    timeToPlay: 'short',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: '2人は じどうで 走るよ。タップすると 2人 同時に ジャンプする。▲とげは とびこえて、天井から 下がった かべは とばずに くぐろう。上と下の 両方を 見て、どちらも 安全な しゅんかんに 押すのが コツ！',
+      controls: ['画面を タップ：2人 同時に ジャンプ（空中では 押せない）'],
+      tips: [
+        '下の せかいの ほうが はやく 流れる。同じ時こくでも 見える 位置が ちがう',
+        'とげは 空中で、かべは 地上で。どちらも かわせる しゅんかんが かならず ある',
+        'ぶつかると ライフが へる（5つまで）。同じ ジャンプの ミスでは 1つしか へらない',
+      ],
+    },
+    achievements: [
+      { id: 'first-pass', name: 'はじめて かわした', desc: 'じゃまものを 1つ かわした' },
+      { id: 'half', name: 'はんぶん とっぱ', desc: 'じゃまものの 半分を かわした' },
+      { id: 'streak-8', name: '8れんぞく', desc: '8つ つづけて かわした' },
+      { id: 'all-pass', name: 'ぜんぶ かわした', desc: 'じゃまものを ぜんぶ かわした', secret: true },
+      { id: 'no-crash', name: 'ふたりとも むきず', desc: '一度も ぶつからずに 走りきった', secret: true },
+      { id: 'score-hi', name: 'ふたつの せかいの ぬし', desc: '950点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🌗', svg: ICON_TWINWORLDS },
+    addedIn: '1.0.0',
+    load: () => import('./twin-worlds/game'),
+  },
+  {
+    id: 'many-me',
+    no: 123,
+    title: 'ふえる わたし',
+    kana: 'ふえるわたし',
+    description: 'スワイプすると 分身ぜんぶが 同じ方向へ 1マス 動く。かべに ぶつかった 分身だけ 止まるので だんだん ズレる。ぜんいんを ゴールに 乗せよう！全5ステージ。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1面 100〜250点（さいたん手数で250・1手よぶんで-40）。満点1250。実機playtest前提の仮値
+    medals: { bronze: 550, silver: 900, gold: 1150 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'スワイプした 方向へ「わたし」ぜんいんが 1マスずつ 動くよ。かべや はしに ぶつかった わたしだけ 止まるので、うまく ズラして ぜんいんを ゴールの 上に 乗せよう！全5ステージ。',
+      controls: ['上下左右に スワイプ：ぜんいんが その方向へ 1マス', '⟲ はじめから：この ステージを やり直す'],
+      tips: [
+        'かべを つかって わざと ズラすのが コツ',
+        'わたしどうしは かさならない。前が つまれば 後ろも 止まる',
+        '手数は「さいたん＋2」まで。こえたら やり直しになる',
+      ],
+    },
+    achievements: [
+      { id: 'first-clear', name: 'はじめての ぜんいん ゴール', desc: '1ステージ クリアした' },
+      { id: 'half', name: 'ちゅうばん とっぱ', desc: '3ステージ クリアした' },
+      { id: 'shortest', name: 'さいたん手数', desc: 'さいたん手数で クリアした' },
+      { id: 'four-me', name: '4人の わたし', desc: '4人の ステージを クリアした', secret: true },
+      { id: 'all-shortest', name: 'むだのない 道すじ', desc: '5ステージ ぜんぶ さいたん手数で クリアした', secret: true },
+      { id: 'score-hi', name: 'ぶんしんの めいじん', desc: '1000点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '👥', svg: ICON_MANYME },
+    addedIn: '1.0.0',
+    load: () => import('./many-me/game'),
+  },
+  {
+    id: 'edge-take',
+    no: 124,
+    title: 'はしから とる',
+    kana: 'はしからとる',
+    description: 'ならんだ数字の 両はしの どちらかを こうたいで とる。合計が 多いほうが かち！あいては 手を すべて 読みきる CPU。全4しあい。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1しあい かち180・ひきわけ60・まけ20＋ぜんしょう200＝満点920。実機playtest前提の仮値
+    medals: { bronze: 400, silver: 650, gold: 860 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'ならんだ数字の 左はし か 右はし の どちらかを こうたいで とっていくよ。ぜんぶ とりおわったとき、合計が 多いほうが かち！ぜんぶで 4しあい。',
+      controls: ['「ひだり」か「みぎ」の カードを タップ：その数字を とる'],
+      tips: [
+        'あいてが 直前に とった数字と 同じ数字は とれない。これを つかって しばれる',
+        '大きい数を とるだけでは 勝てない。つぎに あいてに 何を わたすかを 考えよう',
+        'あいては 手加減なし。でも 最善を つくせば かならず 勝てる ならびに なっている',
+      ],
+    },
+    achievements: [
+      { id: 'first-win', name: 'はじめての しょうり', desc: '1しあい 勝った' },
+      { id: 'half', name: '2しょう', desc: '2しあい 勝った' },
+      { id: 'big-margin', name: '大差の しょうり', desc: '4てん いじょうの 差で 勝った' },
+      { id: 'all-win', name: 'ぜんしょう', desc: '4しあい ぜんぶ 勝った', secret: true },
+      { id: 'no-lose', name: 'むはい', desc: '一度も 負けなかった', secret: true },
+      { id: 'score-hi', name: 'よみの めいじん', desc: '800点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🃏', svg: ICON_EDGETAKE },
+    addedIn: '1.0.0',
+    load: () => import('./edge-take/game'),
+  },
+  {
+    id: 'rule-stack',
+    no: 125,
+    title: 'ルールが ふえる',
+    kana: 'るーるがふえる',
+    description: 'ラウンドごとに ルールが 1つずつ ふえていく！「まるを タップ」→「ただし あおは しない」→「小さいものは 2回」…さいごは 5つ 同時。全6ラウンド。',
+    category: 'reflex',
+    orientation: 'portrait',
+    scoring: 'points',
+    // せいかい20点×36こ＋ノーミスラウンド60×6＝満点1080。実機playtest前提の仮値
+    medals: { bronze: 500, silver: 800, gold: 1000 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'ながれてくる 品に、ルールの とおりに タップしよう。ルールは ラウンドごとに 1つ ふえて、さいごは 5つ 同時！ルールは いつも 画面に 出ているから 覚えなくて だいじょうぶ。全6ラウンド。',
+      controls: ['品を タップ：1回 タップ（ルールで 2回 のときも ある）', 'タップしない：それも こたえの ひとつ'],
+      tips: [
+        'ルールは 上から 順に 見る。あとの ルールが 前を 打ち消すことも ある',
+        '「タップしない」が 正解の 品も まざっている。あわてて 押さない',
+        'ラウンドを ノーミスで こなすと 60点 ボーナス',
+      ],
+    },
+    achievements: [
+      { id: 'first-right', name: 'はじめての せいかい', desc: 'はじめて 正しく さばいた' },
+      { id: 'half', name: 'ちゅうばん とっぱ', desc: '3ラウンド すすんだ' },
+      { id: 'perfect-round', name: 'ノーミス ラウンド', desc: '1ラウンドを ノーミスで こなした' },
+      { id: 'all-rules', name: '5つの ルール', desc: 'ルール5つの ラウンドを ノーミスで こなした', secret: true },
+      { id: 'all-perfect', name: 'ぜんラウンド ノーミス', desc: '6ラウンド ぜんぶ ノーミスで こなした', secret: true },
+      { id: 'score-hi', name: 'ルールの たつじん', desc: '950点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '📋', svg: ICON_RULESTACK },
+    addedIn: '1.0.0',
+    load: () => import('./rule-stack/game'),
+  },
+  {
+    id: 'pull-gravity',
+    no: 126,
+    title: 'ひっぱる じゅうりょく',
+    kana: 'ひっぱるじゅうりょく',
+    description: 'おしている あいだ、ほし ぜんぶが 指に 引きよせられる！とげに ふれないように まわり道させて、下の あなへ ぜんぶ あつめよう。全5ステージ。',
+    category: 'action',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1面 80〜250点（1回でクリアで250・やり直しごとに-50）。満点1250。実機playtest前提の仮値
+    medals: { bronze: 550, silver: 900, gold: 1150 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: '画面を おしている あいだ、その 場所に むかって ほしが ぜんぶ 引きよせられるよ。はなすと だんだん 止まる。とげに ふれないように、下の あなへ ぜんぶ 入れよう！全5ステージ。',
+      controls: ['画面を おす／なぞる：その場所へ ほしを 引きよせる', 'はなす：引力を やめる（ほしは だんだん 止まる）'],
+      tips: [
+        '1つを ねらって 引くと ほかの ほしも 動く。順番を 考えよう',
+        'とげは 動かない。まわり道の 途中で 指を はなして 勢いを ころすのが コツ',
+        '1回で クリアすると 250てん。やり直すと 50点 へる',
+      ],
+    },
+    achievements: [
+      { id: 'first-clear', name: 'はじめての 回収', desc: '1ステージ クリアした' },
+      { id: 'half', name: 'ちゅうばん とっぱ', desc: '3ステージ クリアした' },
+      { id: 'one-shot', name: 'いっぱつ 回収', desc: '1回の ちょうせんで クリアした' },
+      { id: 'collector', name: 'ほし あつめ名人', desc: 'ほしを 12こ いじょう 回収した', secret: true },
+      { id: 'all-one-shot', name: 'むだのない 引力', desc: '5ステージ ぜんぶ 1回で クリアした', secret: true },
+      { id: 'score-hi', name: 'じゅうりょくの ぬし', desc: '1000点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🌌', svg: ICON_PULLGRAVITY },
+    addedIn: '1.0.0',
+    load: () => import('./pull-gravity/game'),
+  },
+  {
+    id: 'untangle',
+    no: 127,
+    title: 'ひもを ほどく',
+    kana: 'ひもをほどく',
+    description: 'こんがらがった ひもを、点を うごかして ほどこう！交差が ゼロに なったら せいかい。じかん制限も しっぱいも ない、のんびり系の 全3もん。',
+    category: 'chill',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1もん 100〜250点（うごかす回数が 点の2ばい までなら 250）。満点750。実機playtest前提の仮値
+    // ※ のんびり系なので 金は 満点の82%（ほぼ完璧を 要求しない）。実機playtest前提の仮値
+    medals: { bronze: 400, silver: 540, gold: 615 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: '点を ドラッグして うごかし、ひも（線）の 交差を ゼロに しよう！赤い ひもは どこかと 交差している しるし。じかん制限も しっぱいも ないよ。全3もん（点は 6→8→10こ）。',
+      controls: ['点を ドラッグ：その点を うごかす', 'はなす：そのときに 交差ゼロなら せいかい'],
+      tips: [
+        'かならず ほどける ように 作られている。あせらなくて だいじょうぶ',
+        'まず 外がわに ぐるっと ならべてみると 見通しが よくなる',
+        'うごかす 回数が 少ないほど 高とくてん',
+      ],
+    },
+    achievements: [
+      { id: 'first-clear', name: 'はじめて ほどけた', desc: '1もん ほどいた' },
+      { id: 'half', name: 'あと ひとつ', desc: '2もん ほどいた' },
+      { id: 'few-drags', name: 'むだのない ほどき', desc: '少ない 回数で ほどいた' },
+      { id: 'big-graph', name: '10この 点', desc: '点が 10この もんだいを ほどいた', secret: true },
+      { id: 'all-neat', name: 'ほどきの めいじん', desc: '3もん ぜんぶ 少ない 回数で ほどいた', secret: true },
+      { id: 'score-hi', name: 'ひもの たつじん', desc: '570点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🪢', svg: ICON_UNTANGLE },
+    addedIn: '1.0.0',
+    load: () => import('./untangle/game'),
+  },
+  {
+    id: 'one-lie',
+    no: 128,
+    title: 'ひとつだけ うそ',
+    kana: 'ひとつだけうそ',
+    description: '4つの ヒントの うち 1つだけが うそ。矛盾を 見つけて、たからの 入った はこを 当てよう！全6もん。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // せいかい 100〜175点＋はやおし25＋ぜんもん175＝満点1150（テスト実測）。実機playtest前提の仮値
+    medals: { bronze: 420, silver: 680, gold: 880 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'ヒントが 4つ あるけれど、その うち 1つだけが うそを 言っているよ。「この はこだと したら うそは いくつ？」を ためして、うそが ちょうど 1つに なる はこを えらぼう！全6もん。',
+      controls: ['はこを タップ：ここに たからが あると こたえる'],
+      tips: [
+        'はこを 1つずつ 当てはめて、合わない ヒントの数を 数えよう',
+        'うそが 0こや 2こに なる はこは こたえでは ない',
+        '10びょう いないに こたえると ボーナス',
+      ],
+    },
+    achievements: [
+      { id: 'first-right', name: 'はじめての 見ぬき', desc: 'はじめて 当てた' },
+      { id: 'half', name: 'ちゅうばん とっぱ', desc: '3もん 当てた' },
+      { id: 'quick', name: 'ひらめき', desc: '10びょう いないに 当てた' },
+      { id: 'streak-4', name: '4れんぞく', desc: '4かい つづけて 当てた', secret: true },
+      { id: 'all-right', name: 'ぜんもん せいかい', desc: '6もん ぜんぶ 当てた', secret: true },
+      { id: 'score-hi', name: 'うそ見ぬきの めいじん', desc: '800点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🕵', svg: ICON_ONELIE },
+    addedIn: '1.0.0',
+    load: () => import('./one-lie/game'),
+  },
+  {
+    id: 'trap-chase',
+    no: 129,
+    title: 'ちえの たたかい',
+    kana: 'ちえのたたかい',
+    description: '追手は かならず 自分に 近づいてくる。その性質を つかって 落とし穴へ 誘い込もう！追手を ぜんぶ おとしたら クリア。全4ステージ。',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 1面 100〜250点（さいたん手数で250・1手よぶんで-20）。満点1000。実機playtest前提の仮値
+    medals: { bronze: 440, silver: 720, gold: 900 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: 'スワイプで じぶんが 1マス 動くと、追手も 1マス 動くよ。追手は かならず じぶんに 近づいてきて、落とし穴を よけない。うまく 誘い込んで ぜんぶ おとそう！全4ステージ。',
+      controls: ['上下左右に スワイプ：じぶんが 1マス 動く（そのあと 追手も 動く）', '⟲ はじめから：この ステージを やり直す'],
+      tips: [
+        '追手は「よこの ずれが 大きければ よこに」動く。読んで さそおう',
+        'じぶんは 落とし穴に 入れない。穴の となりに 立つのが きほん',
+        '手数は「さいたん＋3」まで。つかまっても やり直せる',
+      ],
+    },
+    achievements: [
+      { id: 'first-win', name: 'はじめての わな', desc: '1ステージ クリアした' },
+      { id: 'half', name: 'あと ふたつ', desc: '2ステージ クリアした' },
+      { id: 'par-clear', name: 'さいたん手数', desc: 'さいたん手数で クリアした' },
+      { id: 'three-chasers', name: '3人 まとめて', desc: '追手が 3人の ステージを クリアした', secret: true },
+      { id: 'all-par', name: 'ちえの めいじん', desc: '4ステージ ぜんぶ さいたん手数で クリアした', secret: true },
+      { id: 'score-hi', name: 'わなの たつじん', desc: '800点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🕳', svg: ICON_TRAPCHASE },
+    addedIn: '1.0.0',
+    load: () => import('./trap-chase/game'),
+  },
+  {
+    id: 'final-door',
+    no: 130,
+    title: 'さいごの とびら',
+    kana: 'さいごのとびら',
+    description: '130ばんめ、さいごの ゲーム。「せいかくさ」「きおく」「ひらめき」の 3つの とびらを 順に あけよう。ぜんぶ あけると…？',
+    category: 'puzzle',
+    orientation: 'portrait',
+    scoring: 'points',
+    // 試練1つ 90〜130点×9＋ぜんぶ250＝満点1240。実機playtest前提の仮値
+    medals: { bronze: 520, silver: 880, gold: 1120 },
+    timeToPlay: 'mid',
+    startMode: 'immediate',
+    hidden: true,
+    help: {
+      goal: '3つの とびらには それぞれ ちがう 試練が あるよ。第1「せいかくさ」＝ちぢむ わを みどりの はばで タップ。第2「きおく」＝光った マスを ぜんぶ タップ。第3「ひらめき」＝合計が お題に なる カード2まいを えらぶ。1つの とびらに 試練が 3つ。',
+      controls: ['画面を タップ：わを 止める（第1）', 'マスを タップ：おぼえた ところ（第2）', 'カードを タップ：2まい えらぶ（第3）'],
+      tips: [
+        '1つの 試練に 2回まで ちょうせんできる。2回 しっぱいしても つぎの 試練へ すすめる',
+        'あとの とびらほど 点が 高い',
+        '3つ ぜんぶ あけると 250点 ボーナス',
+      ],
+    },
+    achievements: [
+      { id: 'door-1', name: '第1の とびら', desc: 'せいかくさの とびらを あけた' },
+      { id: 'door-2', name: '第2の とびら', desc: 'きおくの とびらを あけた' },
+      { id: 'perfect-aim', name: 'ぴたり止め', desc: 'いちばん せまい はばで わを 止めた' },
+      { id: 'door-3', name: 'さいごの とびら', desc: '3つの とびら ぜんぶを あけた', secret: true },
+      { id: 'no-miss', name: 'むきずの 通過', desc: '一度も しっぱいせずに 3つの とびらを あけた', secret: true },
+      { id: 'score-hi', name: 'とびらの ぬし', desc: '1000点いじょう とった', secret: true },
+    ],
+    icon: { emoji: '🚪', svg: ICON_FINALDOOR },
+    addedIn: '1.0.0',
+    load: () => import('./final-door/game'),
+  },
 ];
 
 // 検証用ゲーム（開発ビルド限定。本番ビルドには一切含まれない）
@@ -3753,11 +4949,48 @@ if (import.meta.env.DEV) {
   games.push(...dev.devGames);
 }
 
-/** 公開中のゲーム（retired を除き、番号順） */
+// ---------------- かくれゲームの解放 ----------------
+// 本編（No.1〜100）を全部あそぶと、かくれゲーム（hidden: true・No.101〜）が解放される。
+// 画面はどこも activeGames() を見ているので、ここだけで出し分けが完結する
+// （＝解放前の見た目・件数・検索結果は、かくれゲームを足す前とまったく同じ）。
+
+const byNo = (a: GameMeta, b: GameMeta): number => a.no - b.no;
+const alive = (g: GameMeta): boolean => g.status !== 'retired';
+
+/** 本編（No.1〜100）。スタンプ台紙と解放条件の対象。検証用ゲーム(No.901〜)は含まない */
+export function mainGames(): GameMeta[] {
+  return games.filter((g) => alive(g) && !g.hidden && g.no <= 100).sort(byNo);
+}
+
+/** かくれゲーム（解放前でも中身を返す＝解放判定ときろくの別台紙で使う） */
+export function bonusGames(): GameMeta[] {
+  return games.filter((g) => alive(g) && g.hidden).sort(byNo);
+}
+
+/** かくれゲームが解放されているか（本編を全部あそんだ／一度解放したら戻らない） */
+export function bonusUnlocked(): boolean {
+  const doc = getDoc();
+  if (doc.profile.bonusUnlockedAt) return true;
+  // 「本編がそろっていない開発中は解放しない」ガードは **登録数**（retired も数える）で判定する。
+  // alive な本数で判定すると、あとで1本 retired にしたとき（番号は欠番のまま維持）
+  // 100本に足りなくなり、それ以降にはじめた人が かくれゲームに永久にたどりつけなくなる。
+  const declared = games.filter((g) => !g.hidden && g.no <= 100).length;
+  if (declared < 100) return false;
+  const main = mainGames();
+  return main.length > 0 && main.every((g) => (doc.games[g.id]?.plays ?? 0) > 0);
+}
+
+/** 画面に出してよいゲーム（retired を除き、番号順。かくれゲームは解放後だけ混ざる） */
 export function activeGames(): GameMeta[] {
-  return games.filter((g) => g.status !== 'retired').sort((a, b) => a.no - b.no);
+  const unlocked = bonusUnlocked();
+  return games.filter((g) => alive(g) && (!g.hidden || unlocked)).sort(byNo);
 }
 
 export function gameById(id: string): GameMeta | undefined {
   return games.find((g) => g.id === id);
+}
+
+/** そのゲームをいま開いてよいか（かくれゲームは解放前は直リンクでも開かせない） */
+export function isPlayable(meta: GameMeta): boolean {
+  return alive(meta) && (!meta.hidden || bonusUnlocked());
 }

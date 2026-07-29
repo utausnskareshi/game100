@@ -27,6 +27,8 @@ import {
   MEDAL_EMOJI,
   MEDAL_LABEL,
   formatScore,
+  medalGapText,
+  nextMedalGap,
   recordQuit,
   recordResult,
   seedFor,
@@ -115,12 +117,20 @@ export function mountGameHost(meta: GameMeta, onExit: () => void): GameHostHandl
     size.dpr = Math.min(window.devicePixelRatio || 1, 2);
   }
 
-  const ro = new ResizeObserver(() => {
+  const relayout = (): void => {
     updateSize();
     for (const c of canvases) c.layout();
     if (game) game.resize({ ...size });
-  });
+  };
+
+  const ro = new ResizeObserver(relayout);
   ro.observe(gameRoot);
+  // ResizeObserver の保険。回転や iPad の画面分割で箱が変わったとき、
+  // 描画が止まっている環境（バックグラウンドのタブ等）では ResizeObserver の通知が
+  // 届かない/遅れることがあるので window の resize も見る。relayout は冪等なので
+  // 両方走っても副作用はない（canvas の再サイズ＋ゲームへの resize 通知だけ）。
+  window.addEventListener('resize', relayout);
+  cleanupFns.push(() => window.removeEventListener('resize', relayout));
 
   // ---------- ループ ----------
   function loopStep(t: number): void {
@@ -799,8 +809,24 @@ export function mountGameHost(meta: GameMeta, onExit: () => void): GameHostHandl
         }),
       );
     }
-    for (const u of summary.unlocked) {
+    // 次のメダルまで「あと どれくらい」（もう一回やる理由になるので結果画面にも出す）
+    const gap = nextMedalGap(meta);
+    if (gap) {
+      parts.push(
+        el('div', { class: 'result-gap', text: `${medalGapText(meta, gap)}！` }),
+      );
+    }
+    // 実績はまとめて解除されることがある（アプリ更新で全体実績が増えたときなど）。
+    // 結果画面が縦に伸びて「もういちど」「ホームへ」が画面外にならないよう、表示は先頭5件まで
+    // （360×640 の端末で両方のボタンが収まる上限。あふれた分は件数でまとめて伝える）。
+    const ACH_SHOWN = 5;
+    for (const u of summary.unlocked.slice(0, ACH_SHOWN)) {
       parts.push(el('div', { class: 'result-ach', text: `🏆 ${u.name}` }));
+    }
+    if (summary.unlocked.length > ACH_SHOWN) {
+      parts.push(
+        el('div', { class: 'result-ach', text: `🏆 ほか ${summary.unlocked.length - ACH_SHOWN} こ の じっせき！` }),
+      );
     }
     parts.push(
       el(
@@ -813,7 +839,34 @@ export function mountGameHost(meta: GameMeta, onExit: () => void): GameHostHandl
     parts.push(el('button', { class: 'btn btn-primary btn-large', text: 'もういちど', onclick: () => createInstanceAndCountdown() }));
     parts.push(el('button', { class: 'btn btn-ghost', text: 'ホームへ', onclick: () => doExit() }));
 
-    showOverlay(el('div', { class: 'result' }, ...parts), 'result');
+    const showResultOverlay = (): void => {
+      showOverlay(el('div', { class: 'result' }, ...parts), 'result');
+    };
+
+    // 本編100本を遊びきった瞬間だけ、結果の前に専用のお祝い画面を出す。
+    // （結果画面に足すと最小端末で「もういちど」がスクロールの下に隠れてしまうため画面を分ける）
+    if (summary.bonusUnlocked) {
+      showOverlay(
+        el(
+          'div',
+          { class: 'unlock-screen' },
+          el('div', { class: 'unlock-emoji', text: '🎉' }),
+          el('div', { class: 'unlock-title', text: 'かくれゲームが でてきた！' }),
+          el('div', {
+            class: 'unlock-note',
+            text: '100マス ぜんぶ あそんだ ごほうびに、かくされていたゲームが あそべるようになりました。「ゲーム」と「きろく」で見てね。',
+          }),
+          el('button', {
+            class: 'btn btn-primary btn-large',
+            text: 'つづける ▶',
+            onclick: () => showResultOverlay(),
+          }),
+        ),
+        'result',
+      );
+      return;
+    }
+    showResultOverlay();
   }
 
   function doQuit(): void {
